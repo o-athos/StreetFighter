@@ -13,10 +13,8 @@ gcc streetFighter.c square.c joystick.c -o streetFighter $(pkg-config --cflags -
 #include <allegro5/allegro_primitives.h>
 
 //bibliotecas pessoais
-#include "square.h"
-#include "joystick.h"
-#include "bullet.h"
-#include "pistol.h"
+//#include "square.h"
+
 
 #define X_SCREEN 1000
 #define Y_SCREEN 500
@@ -81,19 +79,6 @@ void update_position(square *player_1, square *player_2){																							
 		square_move(player_2, 1, 3, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a baixo (!)
 		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 3, X_SCREEN, Y_SCREEN);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
-
-    if (player_1->control->fire){																																											//Verifica se o primeiro jogador está atirando
-		if (!player_1->gun->timer){																																											//Verifica se a arma do primeiro jogador não está em cooldown
-			square_shot(player_1); 																																											//Se não estiver, faz um disparo
-			player_1->gun->timer = PISTOL_COOLDOWN;																																							//Inicia o cooldown da arma
-		} 
-	}
-	if (player_2->control->fire){																																											//Verifica se o segundo jogador está atirando
-		if (!player_2->gun->timer){																																											//Verifica se a arma do segundo jogador não está em cooldown
-			square_shot(player_2);																																											//Se não estiver, faz um disparo
-			player_2->gun->timer = PISTOL_COOLDOWN;																																							//Inicia o cooldown da arma
-		}
-	}	
 }
 
 
@@ -102,42 +87,26 @@ void update_position(square *player_1, square *player_2){																							
 
 
 int main() {
-    // Inicializar Allegro
-    if (!al_init()) {
-        fprintf(stderr, "Falha ao inicializar Allegro!\n");
-        return -1;
-    }
+
+    al_init();
 
     al_init_primitives_addon();
 
-    // Inicializar teclado
-    if (!al_install_keyboard()) {
-        fprintf(stderr, "Falha ao inicializar o teclado!\n");
-        return -1;
-    }
+    al_install_keyboard();
 
-    // Inicializar add-ons
     al_init_font_addon();
     al_init_ttf_addon();
-    if (!al_init_image_addon()) {
-        fprintf(stderr, "Falha ao inicializar add-on de imagem!\n");
-        return -1;
-    }
+
+    al_init_image_addon();
+        
+
 
     // Criar temporizador, fila de eventos e display
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / 30.0);
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     ALLEGRO_DISPLAY *disp = al_create_display(X_SCREEN, Y_SCREEN);
-    ALLEGRO_FONT *font = al_load_ttf_font("/usr/share/fonts/truetype/freefont/FreeMonoBoldOblique.ttf", 30, 0);
+    ALLEGRO_FONT *font = al_load_ttf_font("fonts/PixelifySans-VariableFont_wght.ttf", 30, 0);
 
-    // Verificar se os componentes foram criados com sucesso
-    if (!timer || !queue || !disp || !font) {
-        if (!timer) fprintf(stderr, "Falha ao criar temporizador!\n");
-        if (!queue) fprintf(stderr, "Falha ao criar fila de eventos!\n");
-        if (!disp) fprintf(stderr, "Falha ao criar display!\n");
-        if (!font) fprintf(stderr, "Falha ao carregar a fonte!\n");
-        return -1;
-    }
 
     // Registrar fontes de eventos
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -146,7 +115,6 @@ int main() {
 
     // Iniciar temporizador
     al_start_timer(timer);
-
 
     // Variável para controlar o estado do menu
     bool menu = true;
@@ -184,7 +152,7 @@ int main() {
 	square* player_2 = square_create(20, 0, X_SCREEN-10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 	if (!player_2) return 2;
 
-    unsigned char p1k = 0, p2k = 0;
+
     ALLEGRO_EVENT event;
     while(1){																																															//Laço principal do programa
 		al_wait_for_event(queue, &event);																																								//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
@@ -205,9 +173,7 @@ int main() {
             else if (event.keyboard.keycode == 82) joystick_left(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda) (!)
             else if (event.keyboard.keycode == 83) joystick_right(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita) (!)
             else if (event.keyboard.keycode == 84) joystick_up(player_2->control);																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima) (!)
-            else if (event.keyboard.keycode == 85) joystick_down(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo) (!)
-            else if (event.keyboard.keycode == 3) joystick_fire(player_1->control);																										                //Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
-            else if (event.keyboard.keycode == 216) joystick_fire(player_2->control);																												    //Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
+            else if (event.keyboard.keycode == 85) joystick_down(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo) (!)																												    //Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
         }
         else if (event.type == 42) break;
     }
@@ -216,8 +182,8 @@ int main() {
     al_destroy_display(disp);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
-	square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
+	square_destroy(player_1);																																												
 	square_destroy(player_2);	
-    																																											//Destrutor do quadrado do segundo jogador
+    																																											
     return 0;
 }
