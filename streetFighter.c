@@ -4,6 +4,7 @@ gcc streetFighter.c square.c joystick.c -o streetFighter $(pkg-config --cflags -
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 //bibliotecas allegro
 #include <allegro5/allegro.h>
@@ -13,8 +14,8 @@ gcc streetFighter.c square.c joystick.c -o streetFighter $(pkg-config --cflags -
 #include <allegro5/allegro_primitives.h>
 
 //bibliotecas pessoais
-//#include "square.h"
-
+#include "square.h"
+#include "joystick.h"
 
 #define X_SCREEN 1000
 #define Y_SCREEN 500
@@ -42,7 +43,7 @@ unsigned char collision_2D(square *element_first, square *element_second) {
 }
 
 
-void update_position(square *player_1, square *player_2){																																				//Função de atualização das posições dos quadrados conforme os comandos do controle (!)
+ void update_position(square *player_1, square *player_2){																																				//Função de atualização das posições dos quadrados conforme os comandos do controle (!)
     
 	if (player_1->control->left){																																										//Se o botão de movimentação para esquerda do controle do primeiro jogador está ativado... (!)
 		square_move(player_1, 1, 0, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do primeiro jogador para a esquerda (!)
@@ -80,8 +81,6 @@ void update_position(square *player_1, square *player_2){																							
 		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 3, X_SCREEN, Y_SCREEN);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
 }
-
-
 
 
 
@@ -147,9 +146,9 @@ int main() {
 
 
 
-    square* player_1 = square_create(20, 1,  10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
+    square* player_1 = square_create(20,  10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
 	if (!player_1) return 1;																    //Verificação de erro na criação do quadrado do primeiro jogador
-	square* player_2 = square_create(20, 0, X_SCREEN-10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
+	square* player_2 = square_create(20, X_SCREEN-10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 	if (!player_2) return 2;
 
 
@@ -165,15 +164,15 @@ int main() {
             al_draw_filled_rectangle(player_2->x-player_2->side/2, player_2->y-player_2->side/2, player_2->x+player_2->side/2, player_2->y+player_2->side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela																																			
             al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
         }
-        else if ((event.type == 10) || (event.type == 12)){																																				//Verifica se o evento é de botão do teclado abaixado ou levantado (!)
-            if (event.keyboard.keycode == 1) joystick_left(player_1->control);																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda) (!)
-            else if (event.keyboard.keycode == 4) joystick_right(player_1->control);																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita) (!)
-            else if (event.keyboard.keycode == 23) joystick_up(player_1->control);																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima) (!)
-            else if (event.keyboard.keycode == 19) joystick_down(player_1->control);																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para baixo) (!)
-            else if (event.keyboard.keycode == 82) joystick_left(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda) (!)
-            else if (event.keyboard.keycode == 83) joystick_right(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita) (!)
-            else if (event.keyboard.keycode == 84) joystick_up(player_2->control);																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima) (!)
-            else if (event.keyboard.keycode == 85) joystick_down(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo) (!)																												    //Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
+        else if ((event.type == 10) || (event.type == 12)){																																				
+            if (event.keyboard.keycode == 1) joystick_left(player_1->control);				//a																											
+            else if (event.keyboard.keycode == 4) joystick_right(player_1->control);		//d																											
+            else if (event.keyboard.keycode == 23) joystick_up(player_1->control);			//w																											
+            else if (event.keyboard.keycode == 19) joystick_down(player_1->control);		//s																											
+            else if (event.keyboard.keycode == 82) joystick_left(player_2->control);		//seta esq																										
+            else if (event.keyboard.keycode == 83) joystick_right(player_2->control);		//seta dir																											
+            else if (event.keyboard.keycode == 84) joystick_up(player_2->control);			//seta cima																											
+            else if (event.keyboard.keycode == 85) joystick_down(player_2->control);		//seta baixo																																																						    //Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
         }
         else if (event.type == 42) break;
     }
