@@ -7,18 +7,18 @@
 #define SQUARE_STEP 10
 typedef struct
 {
-    unsigned int side;
+    unsigned char side;
     unsigned char face;
-    unsigned int x;
-    unsigned int y;
+    unsigned short x;
+    unsigned short y;
     joystick* control;
     pistol* gun;
 
 } square;
 
-square* square_create(unsigned int side, unsigned char face, unsigned int x, unsigned int y, unsigned int x_max, unsigned int y_max);
+square* square_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short x_max, unsigned int y_max);
 
-void square_move(square* move, char steps, unsigned char trajectory, unsigned int x_max, unsigned int y_max);
+void square_move(square* move, char steps, unsigned char trajectory, unsigned short x_max, unsigned short y_max);
 
 void square_shot(square *element);
 

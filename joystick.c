@@ -4,6 +4,7 @@
 joystick* joystick_create(){
 
     joystick* elem = (joystick*)malloc(sizeof(joystick));
+    if (!elem) return NULL;
     elem->right = 0;																
 	elem->left = 0;																
 	elem->up = 0;																

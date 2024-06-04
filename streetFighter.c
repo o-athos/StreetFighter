@@ -70,7 +70,7 @@ void update_bullets(square* player){
 	}
 }
 
- void update_position(square *player_1, square *player_2){																																				//Função de atualização das posições dos quadrados conforme os comandos do controle (!)
+void update_position(square *player_1, square *player_2){																																				//Função de atualização das posições dos quadrados conforme os comandos do controle (!)
     
 	if (player_1->control->left){																																										//Se o botão de movimentação para esquerda do controle do primeiro jogador está ativado... (!)
 		square_move(player_1, 1, 0, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do primeiro jogador para a esquerda (!)
@@ -203,7 +203,7 @@ int main() {
 
         if (event.type == 30){
             update_position(player_1, player_2);																																						//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
-            al_clear_to_color(al_map_rgb(0, 0, 0));																																						//Verifica se o segundo jogador matou o primeiro jogador																																						//Substitui tudo que estava desenhado na tela por um fundo preto
+            al_clear_to_color(al_map_rgb(0, 0, 0));																																			//Verifica se o segundo jogador matou o primeiro jogador																																						//Substitui tudo que estava desenhado na tela por um fundo preto
             al_draw_filled_rectangle(player_1->x-player_1->side/2, player_1->y-player_1->side/2, player_1->x+player_1->side/2, player_1->y+player_1->side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
             al_draw_filled_rectangle(player_2->x-player_2->side/2, player_2->y-player_2->side/2, player_2->x+player_2->side/2, player_2->y+player_2->side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 

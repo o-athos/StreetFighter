@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "square.h"
 
-square* square_create(unsigned int side, unsigned char face, unsigned int x, unsigned int y, unsigned int x_max, unsigned int y_max){
+square* square_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short x_max, unsigned int y_max){
 
     if (x - side/2 < 0 || x + side/2 > x_max || y - side/2 < 0 || y + side/2 > y_max) {
         printf("Não foi possível criar elemento nessa posição\n");
@@ -10,6 +10,7 @@ square* square_create(unsigned int side, unsigned char face, unsigned int x, uns
     }
 
     square* new_element  = (square*)malloc(sizeof(square));
+    if (!new_element) return NULL;
     new_element->side = side;
     new_element->face = face;
     new_element->x = x;
@@ -20,7 +21,7 @@ square* square_create(unsigned int side, unsigned char face, unsigned int x, uns
     return new_element;
 }
 
-void square_move(square* elem, char steps, unsigned char trajectory, unsigned int x_max, unsigned int y_max){
+void square_move(square* elem, char steps, unsigned char trajectory, unsigned short x_max, unsigned short y_max){
 
     int step_size = steps * SQUARE_STEP;
 
@@ -44,6 +45,7 @@ void square_move(square* elem, char steps, unsigned char trajectory, unsigned in
             elem->y = elem->y + step_size;
     }
 }
+
 
 void square_shot(square *element){
     bullet *shot;
