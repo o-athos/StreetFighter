@@ -1,6 +1,6 @@
 /* 
 Compilação: 
-gcc streetFighter.c square.c joystick.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
+gcc streetFighter.c square.c joystick.c pistol.c bullet.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
 */
 
 #include <stdio.h>
@@ -16,6 +16,8 @@ gcc streetFighter.c square.c joystick.c -o streetFighter $(pkg-config --cflags -
 //bibliotecas pessoais
 #include "square.h"
 #include "joystick.h"
+#include "pistol.h"
+#include "bullet.h"
 
 #define X_SCREEN 1000
 #define Y_SCREEN 500
@@ -42,6 +44,31 @@ unsigned char collision_2D(square *element_first, square *element_second) {
     }
 }
 
+void update_bullets(square* player){
+
+    bullet *previous = NULL;																																												//Variável auxiliar para salvar a posição imediatamente anterior na fila (!)
+	for (bullet *index = player->gun->shots; index != NULL;){																																				//Para cada projétil presente na lista de projéteis disparados (!)
+		if (!index->trajectory) index->x -= BULLET_MOVE;																																					//Se a trajetória for para a esquerda, atualiza a posição para a esquerda (!)
+		else if (index->trajectory == 1) index->x += BULLET_MOVE;																																			//Se a trajetória for para a direita, atualiza a posição para a esquerda (!)
+		
+		if ((index->x < 0) || (index->x > X_SCREEN)){																																						//Verifica se o projétil saiu das bordas da janela (!)
+			if (previous){																																													//Verifica se não é o primeiro elemento da lista de projéteis (!)
+				previous->next = index->next;																																								//Se não for, salva o próximo projétil (!)
+				bullet_destroy(index);																																										//Chama o destrutor para o projétil atual (!)
+				index = (bullet*) previous->next;																																							//Atualiza para o próximo projétil (!)
+			}
+			else {																																															//Se for o primeiro projétil da lista (!)
+				player->gun->shots = (bullet*) index->next;																																					//Atualiza o projétil no início da lista (!)
+				bullet_destroy(index);																																										//Chama o destrutor para o projétil atual (!)
+				index = player->gun->shots;																																									//Atualiza para o próximo projétil (!)
+			}
+		}
+		else{																																																//Se não saiu da tela (!)
+			previous = index;																																												//Atualiza o projétil anterior (para a próxima iteração) (!)
+			index = (bullet*) index->next;																																									//Atualiza para o próximo projétil (!)
+		}
+	}
+}
 
  void update_position(square *player_1, square *player_2){																																				//Função de atualização das posições dos quadrados conforme os comandos do controle (!)
     
@@ -80,6 +107,23 @@ unsigned char collision_2D(square *element_first, square *element_second) {
 		square_move(player_2, 1, 3, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a baixo (!)
 		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 3, X_SCREEN, Y_SCREEN);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
+
+    if (player_1->control->fire){																																											//Verifica se o primeiro jogador está atirando (!)
+		if (!player_1->gun->timer){																																											//Verifica se a arma do primeiro jogador não está em cooldown (!)
+			square_shot(player_1); 																																											//Se não estiver, faz um disparo (!)
+			player_1->gun->timer = PISTOL_FIRE_RATE;																																							//Inicia o cooldown da arma (!)
+		} 
+	}
+
+	if (player_2->control->fire){																																											//Verifica se o segundo jogador está atirando (!)
+		if (!player_2->gun->timer){																																											//Verifica se a arma do segundo jogador não está em cooldown (!)
+			square_shot(player_2);																																											//Se não estiver, faz um disparo (!)
+			player_2->gun->timer = PISTOL_FIRE_RATE;																																							//Inicia o cooldown da arma (!)
+		}
+	}
+
+	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador (!)
+	update_bullets(player_2);
 }
 
 
@@ -146,9 +190,9 @@ int main() {
 
 
 
-    square* player_1 = square_create(20,  10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
-	if (!player_1) return 1;																    //Verificação de erro na criação do quadrado do primeiro jogador
-	square* player_2 = square_create(20, X_SCREEN-10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
+    square* player_1 = square_create(20, 1, 10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
+	if (!player_1) return 1;																//Verificação de erro na criação do quadrado do primeiro jogador
+	square* player_2 = square_create(20, 0, X_SCREEN-10, Y_SCREEN/2, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 	if (!player_2) return 2;
 
 
@@ -161,20 +205,33 @@ int main() {
             update_position(player_1, player_2);																																						//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
             al_clear_to_color(al_map_rgb(0, 0, 0));																																						//Verifica se o segundo jogador matou o primeiro jogador																																						//Substitui tudo que estava desenhado na tela por um fundo preto
             al_draw_filled_rectangle(player_1->x-player_1->side/2, player_1->y-player_1->side/2, player_1->x+player_1->side/2, player_1->y+player_1->side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
-            al_draw_filled_rectangle(player_2->x-player_2->side/2, player_2->y-player_2->side/2, player_2->x+player_2->side/2, player_2->y+player_2->side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela																																			
+            al_draw_filled_rectangle(player_2->x-player_2->side/2, player_2->y-player_2->side/2, player_2->x+player_2->side/2, player_2->y+player_2->side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+
+            for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet *)index->next){
+                al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));
+            }
+            if (player_1->gun->timer) player_1->gun->timer--;
+
+            for (bullet *index = player_2->gun->shots; index != NULL; index = (bullet *)index->next){
+                al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(0, 0, 255));
+            }
+            if (player_2->gun->timer) player_2->gun->timer--;
+
             al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
         }
         else if ((event.type == 10) || (event.type == 12)){																																				
-            if (event.keyboard.keycode == 1) joystick_left(player_1->control);				//a																											
-            else if (event.keyboard.keycode == 4) joystick_right(player_1->control);		//d																											
-            else if (event.keyboard.keycode == 23) joystick_up(player_1->control);			//w																											
-            else if (event.keyboard.keycode == 19) joystick_down(player_1->control);		//s																											
-            else if (event.keyboard.keycode == 82) joystick_left(player_2->control);		//seta esq																										
-            else if (event.keyboard.keycode == 83) joystick_right(player_2->control);		//seta dir																											
-            else if (event.keyboard.keycode == 84) joystick_up(player_2->control);			//seta cima																											
-            else if (event.keyboard.keycode == 85) joystick_down(player_2->control);		//seta baixo																																																						    //Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
+            if (event.keyboard.keycode == ALLEGRO_KEY_A) joystick_left(player_1->control);																															
+            else if (event.keyboard.keycode == ALLEGRO_KEY_D) joystick_right(player_1->control);																													
+            else if (event.keyboard.keycode == ALLEGRO_KEY_W) joystick_up(player_1->control);																													
+            else if (event.keyboard.keycode == ALLEGRO_KEY_S) joystick_down(player_1->control);																												
+            else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) joystick_left(player_2->control);																											
+            else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) joystick_right(player_2->control);																													
+            else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_up(player_2->control);																														
+            else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) joystick_down(player_2->control);		
+            else if (event.keyboard.keycode == ALLEGRO_KEY_C)	joystick_fire(player_1->control);
+            else if (event.keyboard.keycode == ALLEGRO_KEY_RCTRL) joystick_fire(player_2->control);
         }
-        else if (event.type == 42) break;
+        else if (event.type == 42) break;																    
     }
 
     al_destroy_font(font);
