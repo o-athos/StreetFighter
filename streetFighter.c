@@ -90,7 +90,7 @@ void update_position(square *player_1, square *player_2){
 		square_move(player_1, 1, 2, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para cima (!)
 		if (collision_2D(player_1, player_2)) square_move(player_1, -1, 2, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
-	if (player_1->control->down){																																										//Se o botão de movimentação para baixo do controle do primeiro jogador está ativado... (!)
+	if (player_1->control->down && !player_1->is_jump && !player_1->is_faling){																																										//Se o botão de movimentação para baixo do controle do primeiro jogador está ativado... (!)
 		square_move(player_1, 1, 3, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a baixo (!)
 		if (collision_2D(player_1, player_2)) square_move(player_1, -1, 3, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
@@ -109,11 +109,14 @@ void update_position(square *player_1, square *player_2){
 		square_move(player_2, 1, 2, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a cima (!)
 		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 2, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)			
 	}
-	if (player_2->control->down){																																										//Se o botão de movimentação para baixo do controle do segundo jogador está ativado... (!)
+	if (player_2->control->down && !player_2->is_jump && !player_2->is_faling){																																										//Se o botão de movimentação para baixo do controle do segundo jogador está ativado... (!)
 		square_move(player_2, 1, 3, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a baixo (!)
 		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 3, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
 
+
+
+	/* TIRO */
     if (player_1->control->fire){																																											//Verifica se o primeiro jogador está atirando (!)
 		if (!player_1->gun->timer){																																											//Verifica se a arma do primeiro jogador não está em cooldown (!)
 			square_shot(player_1); 																																											//Se não estiver, faz um disparo (!)
@@ -127,9 +130,13 @@ void update_position(square *player_1, square *player_2){
 			player_2->gun->timer = PISTOL_FIRE_RATE;																																							//Inicia o cooldown da arma (!)
 		}
 	}
+	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador (!)
+	update_bullets(player_2);
 
 
-	/* PULO DO PLAYER 1*/
+
+
+	/* PULO DO PLAYER 1 */
 	if (player_1->control->jump){
 		square_jump(player_1, FLOOR);
 	}
@@ -158,7 +165,7 @@ void update_position(square *player_1, square *player_2){
 	}
 
 
-	/*PULO DO PLAYER 2*/
+	/* PULO DO PLAYER 2 */
 	if (player_2->control->jump){
 		square_jump(player_2, FLOOR);
 	}
@@ -186,10 +193,6 @@ void update_position(square *player_1, square *player_2){
 		player_2->y -= GRAVITY;
 	}
 
-
-
-	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador (!)
-	update_bullets(player_2);
 }
 
 unsigned char check_kill(square *killer, square *victim){																																					
@@ -279,9 +282,9 @@ int main() {
 
 
 
-    square* player_1 = square_create(20, 1, 10, FLOOR-10, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
+    square* player_1 = square_create(25, 1, 50, FLOOR-10, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
 	if (!player_1) return 1;																//Verificação de erro na criação do quadrado do primeiro jogador
-	square* player_2 = square_create(20, 0, X_SCREEN-10, FLOOR-10, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
+	square* player_2 = square_create(25, 0, X_SCREEN-50, FLOOR-10, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 	if (!player_2) return 2;
 
 
