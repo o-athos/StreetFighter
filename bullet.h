@@ -1,7 +1,7 @@
 #ifndef __BULLET__
 #define __BULLET__
 
-#define BULLET_MOVE 5
+#define BULLET_MOVE 8
 
 typedef struct{
 

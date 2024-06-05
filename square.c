@@ -15,6 +15,9 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
     new_element->face = face;
     new_element->x = x;
     new_element->y = y;
+    new_element->hp = 3;
+    new_element->is_jump = 0;
+    new_element->is_faling = 0;
     new_element->control = joystick_create();
     new_element->gun = pistol_create();
 
@@ -56,6 +59,14 @@ void square_shot(square *element){
         (element->face == 1) shot = pistol_shot(element->x + element->side/2, element->y, element->face, element->gun);		
 
 	if (shot) element->gun->shots = shot;
+}
+
+void square_jump(square *elem, unsigned short floor){
+
+    if (!elem->is_jump && elem->y == floor - 10){
+        elem->is_jump = 1;
+    }
+
 }
 
 void square_destroy(square* elem){

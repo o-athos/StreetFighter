@@ -9,7 +9,8 @@ joystick* joystick_create(){
 	elem->left = 0;																
 	elem->up = 0;																
 	elem->down = 0;	
-    elem->fire = 0;															
+    elem->fire = 0;	
+    elem->jump = 0;														
 	return elem;																	
 }
 
@@ -35,4 +36,8 @@ void joystick_down(joystick* elem){
 
 void joystick_fire(joystick* elem){
     elem->fire = elem->fire ^ 1;
+}
+
+void joystick_jump(joystick* elem){
+    elem->jump = elem->jump ^ 1;
 }
