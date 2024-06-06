@@ -98,11 +98,13 @@ void update_position(square *player_1, square *player_2){
 	if (player_2->control->left){																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
 		square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
 		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 0, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		player_2->face = 0;
 	}
 	
 	if (player_2->control->right){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
 		square_move(player_2, 1, 1, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a direita (!)
 		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 1, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		player_2->face = 1;
 	}
 	
 	if (player_2->control->up){																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
@@ -142,7 +144,6 @@ void update_position(square *player_1, square *player_2){
 	}
 	
 	if (player_1->is_jump){
-		printf("1\n");
 		player_1->y -= JUMP_SPEED;
 		if (player_1->y <= 350){
 			player_1->is_faling = 1;
@@ -155,7 +156,6 @@ void update_position(square *player_1, square *player_2){
 	}
 	if (player_1->is_faling){
 		player_1->y += GRAVITY;
-		printf("111111\n");
 		if (player_1->y >= FLOOR - 10){
 			player_1->is_faling = 0;
 		}
@@ -171,7 +171,6 @@ void update_position(square *player_1, square *player_2){
 	}
 	
 	if (player_2->is_jump){
-		printf("2\n");
 		player_2->y -= JUMP_SPEED;
 		if (player_2->y <= 350){
 			player_2->is_faling = 1;
@@ -184,7 +183,6 @@ void update_position(square *player_1, square *player_2){
 	}
 	if (player_2->is_faling){
 		player_2->y += GRAVITY;
-		printf("2222\n");
 		if (player_2->y >= FLOOR - 10){
 			player_2->is_faling = 0;
 		}
@@ -200,8 +198,9 @@ unsigned char check_kill(square *killer, square *victim){
 	bullet *previous = NULL;
 	for (bullet *index = killer->gun->shots; index != NULL; index = (bullet*) index->next){																													
 		if ((index->x >= victim->x - victim->side/2) && (index->x <= victim->x + victim->side/2) && //																										
-		   (index->y >= victim->y - victim->side/2) && (index->y <= victim->y + victim->side/2)){																											
-			victim->hp--;																																													
+		   (index->y >= victim->y - victim->side/2) && (index->y <= victim->y + victim->side/2)){	
+			if (!victim->control->parry)																								
+				victim->hp--;																																													
 			if (victim->hp){																																												
 				if (previous){																																												
 					previous->next = index->next;																																							
@@ -343,10 +342,13 @@ int main() {
                 else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) joystick_down(player_2->control);
 
                 else if (event.keyboard.keycode == ALLEGRO_KEY_C)	joystick_fire(player_1->control);
-                else if (event.keyboard.keycode == ALLEGRO_KEY_RCTRL) joystick_fire(player_2->control);
+                else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_fire(player_2->control);
 
 				else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE) joystick_jump(player_1->control);
 				else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_jump(player_2->control);
+
+				else if (event.keyboard.keycode == ALLEGRO_KEY_E) joystick_parry(player_1->control);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_parry(player_2->control);
             }
             else if (event.type == 42) break;																    
         }
