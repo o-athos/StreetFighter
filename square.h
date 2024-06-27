@@ -5,6 +5,8 @@
 #include "pistol.h"
 
 #define SQUARE_STEP 7
+#define PUNCH_RANGE 75
+#define PUNCH_COOLDOWN 10
 typedef struct
 {
     unsigned char side;
@@ -14,6 +16,7 @@ typedef struct
     unsigned char hp;
     int is_jump;
     int is_faling;
+    unsigned char punch_timer;
     joystick* control;
     pistol* gun;
 
@@ -26,6 +29,8 @@ void square_move(square* move, char steps, unsigned char trajectory, unsigned sh
 void square_shot(square *element);
 
 void square_jump(square *elem, unsigned short floor);
+
+void square_punch(square *elem, square *opponent);
 
 void square_destroy(square *elem);
 

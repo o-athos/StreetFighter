@@ -18,6 +18,7 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
     new_element->hp = 3;
     new_element->is_jump = 0;
     new_element->is_faling = 0;
+    new_element->punch_timer = 0;
     new_element->control = joystick_create();
     new_element->gun = pistol_create();
 
@@ -68,6 +69,28 @@ void square_jump(square *elem, unsigned short floor){
     }
 
 }
+
+void square_punch(square *elem, square *opponent){
+    
+    if (elem->face == 0){
+        printf("quase\n");
+        if (opponent->x <= elem->x && opponent->x >= elem->x - PUNCH_RANGE &&
+        opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2){
+            printf("dyenuing\n");
+            opponent->hp--;
+            printf("%u\n", opponent->hp);
+        }
+    } else if (elem->face == 1) { 
+        printf("quase\n");
+        if (opponent->x >= elem->x && opponent->x <= elem->x + PUNCH_RANGE &&
+            opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
+            printf("dyenuing\n");
+            opponent->hp--;
+            printf("%u\n", opponent->hp);            
+        }
+    }
+}
+
 
 void square_destroy(square* elem){
 

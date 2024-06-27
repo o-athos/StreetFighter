@@ -1,5 +1,6 @@
 #include "joystick.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 joystick* joystick_create(){
 
@@ -11,7 +12,8 @@ joystick* joystick_create(){
 	elem->down = 0;	
     elem->fire = 0;	
     elem->jump = 0;	
-    elem->parry = 0;													
+    elem->parry = 0;
+    elem->punch = 0;													
 	return elem;																	
 }
 
@@ -45,4 +47,8 @@ void joystick_jump(joystick* elem){
 
 void joystick_parry(joystick* elem){
     elem->parry = elem->parry ^ 1;
+}
+
+void joystick_punch(joystick* elem){
+    elem->punch = elem->punch ^ 1;
 }

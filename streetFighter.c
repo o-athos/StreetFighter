@@ -191,6 +191,21 @@ void update_position(square *player_1, square *player_2){
 		player_2->y -= GRAVITY;
 	}
 
+
+	if (player_1->control->punch){
+		if (!player_1->punch_timer){
+			square_punch(player_1, player_2);
+			player_1->punch_timer = PUNCH_COOLDOWN;
+		}
+	}
+	if (player_2->control->punch){
+		if (!player_2->punch_timer){
+			square_punch(player_2, player_1);
+
+			player_2->punch_timer = PUNCH_COOLDOWN;
+		}
+	}
+
 }
 
 unsigned char check_kill(square *killer, square *victim){																																					
@@ -312,7 +327,11 @@ int main() {
                 
                 p1_isDead = check_kill(player_2, player_1);
                 p2_isDead = check_kill(player_1, player_2);
-                                                                                                                                                                    
+                if (player_1->hp == 0)
+					p1_isDead = 1;
+				if (player_2->hp == 0)
+					p2_isDead = 1;
+					                                                                                                                                               
                 al_clear_to_color(al_map_rgb(0, 0, 0));																																																																									//Substitui tudo que estava desenhado na tela por um fundo preto
                 al_draw_filled_rectangle(player_1->x-player_1->side/2, player_1->y-player_1->side/2, player_1->x+player_1->side/2, player_1->y+player_1->side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
                 al_draw_filled_rectangle(player_2->x-player_2->side/2, player_2->y-player_2->side/2, player_2->x+player_2->side/2, player_2->y+player_2->side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
@@ -326,6 +345,10 @@ int main() {
                     al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(0, 0, 255));
                 }
                 if (player_2->gun->timer) player_2->gun->timer--;
+
+
+				if (player_1->punch_timer) player_1->punch_timer--;
+				if (player_2->punch_timer) player_2->punch_timer--;	
 
                 al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
             }
@@ -349,6 +372,9 @@ int main() {
 
 				else if (event.keyboard.keycode == ALLEGRO_KEY_E) joystick_parry(player_1->control);
 				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_parry(player_2->control);
+				
+				else if (event.keyboard.keycode == ALLEGRO_KEY_Q) joystick_punch(player_1->control);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_punch(player_2->control);
             }
             else if (event.type == 42) break;																    
         }
