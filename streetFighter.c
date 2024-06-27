@@ -316,6 +316,8 @@ int main() {
 	square* player_2 = square_create(25, 0, X_SCREEN-50, FLOOR-10, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 	if (!player_2) return 2;
 
+	player_1->health_bar = create_health_bar(10, 10, 400, 5, player_1->hp);
+	player_2->health_bar = create_health_bar(X_SCREEN - 410, 10, 400, 5, player_2->hp);
 
 
     unsigned char p1_isDead = 0, p2_isDead = 0;
@@ -350,6 +352,9 @@ int main() {
                 al_clear_to_color(al_map_rgb(0, 0, 0));																																																																									//Substitui tudo que estava desenhado na tela por um fundo preto
                 al_draw_filled_rectangle(player_1->x-player_1->side/2, player_1->y-player_1->side/2, player_1->x+player_1->side/2, player_1->y+player_1->side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
                 al_draw_filled_rectangle(player_2->x-player_2->side/2, player_2->y-player_2->side/2, player_2->x+player_2->side/2, player_2->y+player_2->side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+				
+				draw_health_bar(disp, player_1->health_bar);
+				draw_health_bar(disp, player_2->health_bar);
 
                 for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet *)index->next){
                     al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));

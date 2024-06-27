@@ -3,6 +3,7 @@
 
 #include "joystick.h"
 #include "pistol.h"
+#include "health_bar.h"
 
 #define SQUARE_STEP 7
 #define PUNCH_RANGE 75
@@ -22,6 +23,7 @@ typedef struct
     unsigned char kick_timer;
     joystick* control;
     pistol* gun;
+    HealthBar *health_bar;
 
 } square;
 

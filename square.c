@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "square.h"
+#include "health_bar.h"
 
 square* square_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short x_max, unsigned int y_max){
 
@@ -15,7 +16,7 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
     new_element->face = face;
     new_element->x = x;
     new_element->y = y;
-    new_element->hp = 3;
+    new_element->hp = 10;
     new_element->is_jump = 0;
     new_element->is_faling = 0;
     new_element->punch_timer = 0;
@@ -79,6 +80,7 @@ void square_punch(square *elem, square *opponent){
         opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2){
             printf("dyenuing\n");
             opponent->hp--;
+            update_health_bar(opponent->health_bar, opponent->hp);
             printf("%u\n", opponent->hp);
         }
     } else if (elem->face == 1) { 
@@ -87,6 +89,7 @@ void square_punch(square *elem, square *opponent){
             opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
             printf("dyenuing\n");
             opponent->hp--;
+            update_health_bar(opponent->health_bar, opponent->hp);
             printf("%u\n", opponent->hp);            
         }
     }
@@ -100,6 +103,7 @@ void square_kick(square *elem, square *opponent){
         opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
             printf("tomou1\n");
             opponent->hp--;
+            update_health_bar(opponent->health_bar, opponent->hp);
             printf("%u\n", opponent->hp);
         }
     } else if (elem->face == 1) { 
@@ -108,6 +112,7 @@ void square_kick(square *elem, square *opponent){
             opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
             printf("tomou\n");
             opponent->hp--;
+            update_health_bar(opponent->health_bar, opponent->hp);
             printf("%u\n", opponent->hp);            
         }
     }
@@ -117,6 +122,7 @@ void square_kick(square *elem, square *opponent){
 void square_destroy(square* elem){
 
     pistol_destroy(elem->gun);																														
-	joystick_destroy(elem->control);	
+	joystick_destroy(elem->control);
+    destroy_health_bar(elem->health_bar);
     free(elem);
 }
