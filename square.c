@@ -19,6 +19,7 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
     new_element->is_jump = 0;
     new_element->is_faling = 0;
     new_element->punch_timer = 0;
+    new_element->kick_timer = 0;   
     new_element->control = joystick_create();
     new_element->gun = pistol_create();
 
@@ -73,7 +74,7 @@ void square_jump(square *elem, unsigned short floor){
 void square_punch(square *elem, square *opponent){
     
     if (elem->face == 0){
-        printf("quase\n");
+        printf("quase punch\n");
         if (opponent->x <= elem->x && opponent->x >= elem->x - PUNCH_RANGE &&
         opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2){
             printf("dyenuing\n");
@@ -81,10 +82,31 @@ void square_punch(square *elem, square *opponent){
             printf("%u\n", opponent->hp);
         }
     } else if (elem->face == 1) { 
-        printf("quase\n");
+        printf("quase punch\n");
         if (opponent->x >= elem->x && opponent->x <= elem->x + PUNCH_RANGE &&
             opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
             printf("dyenuing\n");
+            opponent->hp--;
+            printf("%u\n", opponent->hp);            
+        }
+    }
+}
+
+void square_kick(square *elem, square *opponent){
+
+    if (elem->face == 0){
+        printf("quase kick1\n");
+        if (opponent->x <= elem->x && opponent->x >= elem->x - KICK_RANGE &&
+        opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
+            printf("tomou1\n");
+            opponent->hp--;
+            printf("%u\n", opponent->hp);
+        }
+    } else if (elem->face == 1) { 
+        printf("quase kick\n");
+        if (opponent->x >= elem->x && opponent->x <= elem->x + KICK_RANGE &&
+            opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
+            printf("tomou\n");
             opponent->hp--;
             printf("%u\n", opponent->hp);            
         }

@@ -206,6 +206,21 @@ void update_position(square *player_1, square *player_2){
 		}
 	}
 
+
+	if (player_1->control->kick){
+		if (!player_1->kick_timer){
+			square_kick(player_1, player_2);
+			player_1->kick_timer = KICK_COOLDOWN;
+		}
+	}
+
+	if (player_2->control->kick){
+		if (!player_2->kick_timer){
+			square_kick(player_2, player_1);
+
+			player_2->kick_timer = KICK_COOLDOWN;
+		}
+	}
 }
 
 unsigned char check_kill(square *killer, square *victim){																																					
@@ -350,6 +365,9 @@ int main() {
 				if (player_1->punch_timer) player_1->punch_timer--;
 				if (player_2->punch_timer) player_2->punch_timer--;	
 
+				if (player_1->kick_timer) player_1->kick_timer--;
+				if (player_2->kick_timer) player_2->kick_timer--;	
+
                 al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
             }
             else if ((event.type == 10) || (event.type == 12)){	
@@ -375,6 +393,9 @@ int main() {
 				
 				else if (event.keyboard.keycode == ALLEGRO_KEY_Q) joystick_punch(player_1->control);
 				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_punch(player_2->control);
+
+				else if (event.keyboard.keycode == ALLEGRO_KEY_X) joystick_kick(player_1->control);
+				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_DELETE) joystick_kick(player_2->control);
             }
             else if (event.type == 42) break;																    
         }

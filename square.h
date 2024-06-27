@@ -6,7 +6,9 @@
 
 #define SQUARE_STEP 7
 #define PUNCH_RANGE 75
+#define KICK_RANGE 85
 #define PUNCH_COOLDOWN 10
+#define KICK_COOLDOWN 15
 typedef struct
 {
     unsigned char side;
@@ -17,6 +19,7 @@ typedef struct
     int is_jump;
     int is_faling;
     unsigned char punch_timer;
+    unsigned char kick_timer;
     joystick* control;
     pistol* gun;
 
@@ -31,6 +34,8 @@ void square_shot(square *element);
 void square_jump(square *elem, unsigned short floor);
 
 void square_punch(square *elem, square *opponent);
+
+void square_kick(square *elem, square *opponent);
 
 void square_destroy(square *elem);
 
