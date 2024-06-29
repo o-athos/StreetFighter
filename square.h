@@ -19,6 +19,7 @@ typedef struct
     unsigned char hp;
     int is_jump;
     int is_faling;
+    int is_crouching;
     unsigned char punch_timer;
     unsigned char kick_timer;
     joystick* control;
@@ -38,6 +39,10 @@ void square_jump(square *elem, unsigned short floor);
 void square_punch(square *elem, square *opponent);
 
 void square_kick(square *elem, square *opponent);
+
+void square_crouch(square *elem);
+
+void square_stand(square *elem);
 
 void square_destroy(square *elem);
 

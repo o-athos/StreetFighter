@@ -12,6 +12,7 @@ typedef struct {
     unsigned char parry;
     unsigned char punch;
     unsigned char kick;
+    unsigned char crouch;   
 
 } joystick;
 
@@ -36,5 +37,7 @@ void joystick_parry(joystick* elem);
 void joystick_punch(joystick* elem);
 
 void joystick_kick(joystick* elem);
+
+void joystick_crouch(joystick* elem);
 
 #endif

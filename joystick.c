@@ -14,7 +14,8 @@ joystick* joystick_create(){
     elem->jump = 0;	
     elem->parry = 0;
     elem->punch = 0;
-    elem->kick = 0;													
+    elem->kick = 0;	
+    elem->crouch = 0;												
 	return elem;																	
 }
 
@@ -56,4 +57,8 @@ void joystick_punch(joystick* elem){
 
 void joystick_kick(joystick* elem){
     elem->kick = elem->kick ^ 1;
+}
+
+void joystick_crouch(joystick* elem){
+    elem->crouch = elem->crouch ^ 1;
 }

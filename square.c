@@ -19,6 +19,7 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
     new_element->hp = 10;
     new_element->is_jump = 0;
     new_element->is_faling = 0;
+    new_element->is_crouching = 0;
     new_element->punch_timer = 0;
     new_element->kick_timer = 0;   
     new_element->control = joystick_create();
@@ -118,6 +119,23 @@ void square_kick(square *elem, square *opponent){
     }
 }
 
+void square_crouch(square *elem){
+
+    if (!elem->is_crouching){
+        elem->is_crouching = 1;
+        elem->side /= 2;
+    }
+
+}
+
+void square_stand(square *elem){
+
+    if (elem->is_crouching){
+        elem->is_crouching = 0;
+        elem->side *= 2;
+    }
+
+}
 
 void square_destroy(square* elem){
 
