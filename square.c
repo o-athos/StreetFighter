@@ -80,18 +80,22 @@ void square_punch(square *elem, square *opponent){
         if (opponent->x <= elem->x && opponent->x >= elem->x - PUNCH_RANGE &&
         opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2){
             printf("dyenuing\n");
-            opponent->hp--;
-            update_health_bar(opponent->health_bar, opponent->hp);
-            printf("%u\n", opponent->hp);
+            if (!opponent->control->parry){
+                opponent->hp--;
+                update_health_bar(opponent->health_bar, opponent->hp);
+                printf("%u\n", opponent->hp);
+            }
         }
     } else if (elem->face == 1) { 
         printf("quase punch\n");
         if (opponent->x >= elem->x && opponent->x <= elem->x + PUNCH_RANGE &&
             opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
             printf("dyenuing\n");
-            opponent->hp--;
-            update_health_bar(opponent->health_bar, opponent->hp);
-            printf("%u\n", opponent->hp);            
+            if (!opponent->control->parry){
+                opponent->hp--;
+                update_health_bar(opponent->health_bar, opponent->hp);
+                printf("%u\n", opponent->hp); 
+            }           
         }
     }
 }
@@ -103,18 +107,22 @@ void square_kick(square *elem, square *opponent){
         if (opponent->x <= elem->x && opponent->x >= elem->x - KICK_RANGE &&
         opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
             printf("tomou1\n");
-            opponent->hp--;
-            update_health_bar(opponent->health_bar, opponent->hp);
-            printf("%u\n", opponent->hp);
+            if (!opponent->control->parry){
+                opponent->hp--;
+                update_health_bar(opponent->health_bar, opponent->hp);
+                printf("%u\n", opponent->hp);
+            }
         }
     } else if (elem->face == 1) { 
         printf("quase kick\n");
         if (opponent->x >= elem->x && opponent->x <= elem->x + KICK_RANGE &&
             opponent->y <= elem->y + elem->side/2 && opponent->y >= elem->y - elem->side/2) {
             printf("tomou\n");
-            opponent->hp--;
-            update_health_bar(opponent->health_bar, opponent->hp);
-            printf("%u\n", opponent->hp);            
+            if (!opponent->control->parry){
+                opponent->hp--;
+                update_health_bar(opponent->health_bar, opponent->hp);
+                printf("%u\n", opponent->hp);
+            }            
         }
     }
 }

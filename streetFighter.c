@@ -322,6 +322,8 @@ int main() {
     }
 
 
+	/* -------------------------INICIO DO JOGO COM ROUNDS --------------------------------*/
+
 	int p1_score = 0, p2_score = 0;
 	int rounds = 0;
 	while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
@@ -445,7 +447,7 @@ int main() {
 	}
 
 
-    // Exibe o vencedor
+    /* EXIBIÇÂO DO VENCEDOR */
     al_clear_to_color(al_map_rgb(0, 0, 0));
     if (p1_score > p2_score) {
         al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 1 Wins!");
@@ -466,8 +468,7 @@ int main() {
     al_destroy_display(disp);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
-//	square_destroy(player_1);																																												
-//	square_destroy(player_2);	
-    																																											
+
+
     return 0;
 }
