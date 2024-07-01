@@ -22,24 +22,27 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c -o streetFighter $(pkg
 #define X_SCREEN 1000
 #define Y_SCREEN 500
 #define FLOOR 400
-#define HIGH_JUMP 390
-#define JUMP_SPEED 5
-#define GRAVITY 2
+#define HIGH_JUMP 325
+#define JUMP_SPEED 10
+#define GRAVITY 5
 
 unsigned char collision_2D(square *element_first, square *element_second) {
-    float half_side_first = element_first->side / 2.0;
-    float half_side_second = element_second->side / 2.0;
     
-    float left_first = element_first->x - half_side_first;
-    float right_first = element_first->x + half_side_first;
-    float top_first = element_first->y + half_side_first;
-    float bottom_first = element_first->y - half_side_first;
+	float half_x_side_first = element_first->x_side / 2.0;
+    float half_y_side_first = element_second->y_side / 2.0;
 
-    float left_second = element_second->x - half_side_second;
-    float right_second = element_second->x + half_side_second;
-    float top_second = element_second->y + half_side_second;
-    float bottom_second = element_second->y - half_side_second;
-    
+    float half_x_side_second = element_second->x_side / 2.0;
+    float half_y_side_second = element_second->y_side / 2.0;
+
+    float left_first = element_first->x - half_x_side_first;
+    float right_first = element_first->x + half_x_side_first;
+    float top_first = element_first->y + half_y_side_first;
+    float bottom_first = element_first->y - half_y_side_first;
+
+    float left_second = element_second->x - half_x_side_second;
+    float right_second = element_second->x + half_x_side_second;
+    float top_second = element_second->y + half_y_side_second;
+    float bottom_second = element_second->y - half_y_side_second;
     if (left_first < right_second && right_first > left_second &&
         bottom_first < top_second && top_first > bottom_second) {
         return 1;
@@ -145,7 +148,7 @@ void update_position(square *player_1, square *player_2){
 	
 	if (player_1->is_jump){
 		player_1->y -= JUMP_SPEED;
-		if (player_1->y <= 350){
+		if (player_1->y <= HIGH_JUMP){
 			player_1->is_faling = 1;
 			player_1->is_jump = 0;
 		}
@@ -172,7 +175,7 @@ void update_position(square *player_1, square *player_2){
 	
 	if (player_2->is_jump){
 		player_2->y -= JUMP_SPEED;
-		if (player_2->y <= 350){
+		if (player_2->y <= HIGH_JUMP){
 			player_2->is_faling = 1;
 			player_2->is_jump = 0;
 		}
@@ -239,8 +242,8 @@ unsigned char check_kill(square *killer, square *victim){
 
 	bullet *previous = NULL;
 	for (bullet *index = killer->gun->shots; index != NULL; index = (bullet*) index->next){																													
-		if ((index->x >= victim->x - victim->side/2) && (index->x <= victim->x + victim->side/2) && //																										
-		   (index->y >= victim->y - victim->side/2) && (index->y <= victim->y + victim->side/2)){	
+		if ((index->x >= victim->x - victim->x_side/2) && (index->x <= victim->x + victim->x_side/2) && //																										
+		   (index->y >= victim->y - victim->y_side/2) && (index->y <= victim->y + victim->y_side/2)){	
 			if (!victim->control->parry)																								
 				victim->hp--;																																													
 			if (victim->hp){																																												
@@ -328,9 +331,9 @@ int main() {
 	int rounds = 0;
 	while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
 
-		square* player_1 = square_create(25, 1, 50, FLOOR-10, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
+		square* player_1 = square_create(25, 40, 1, 50, FLOOR-10, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
 		if (!player_1) return 1;																//Verificação de erro na criação do quadrado do primeiro jogador
-		square* player_2 = square_create(25, 0, X_SCREEN-50, FLOOR-10, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
+		square* player_2 = square_create(25, 40, 0, X_SCREEN-50, FLOOR-10, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 		if (!player_2) return 2;
 
 		player_1->health_bar = create_health_bar(10, 10, 400, 5, player_1->hp);
@@ -384,8 +387,8 @@ int main() {
 						p2_isDead = 1;
 																																									
 					al_clear_to_color(al_map_rgb(0, 0, 0));																																																																									//Substitui tudo que estava desenhado na tela por um fundo preto
-					al_draw_filled_rectangle(player_1->x-player_1->side/2, player_1->y-player_1->side/2, player_1->x+player_1->side/2, player_1->y+player_1->side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
-					al_draw_filled_rectangle(player_2->x-player_2->side/2, player_2->y-player_2->side/2, player_2->x+player_2->side/2, player_2->y+player_2->side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+					al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
+					al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 					
 					draw_health_bar(disp, player_1->health_bar);
 					draw_health_bar(disp, player_2->health_bar);
