@@ -26,7 +26,7 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c -o streetFighter $(pkg
 #define JUMP_SPEED 10
 #define GRAVITY 5
 
-unsigned char collision_2D(square *element_first, square *element_second) {
+unsigned char collision_2D(square *element_first, square *element_second, int *p_on_p) {
     
 	float half_x_side_first = element_first->x_side / 2.0;
     float half_y_side_first = element_second->y_side / 2.0;
@@ -43,6 +43,17 @@ unsigned char collision_2D(square *element_first, square *element_second) {
     float right_second = element_second->x + half_x_side_second;
     float top_second = element_second->y + half_y_side_second;
     float bottom_second = element_second->y - half_y_side_second;
+
+    // Verificar se um está em cima do outro
+    if (bottom_first <= top_second && top_first >= bottom_second &&
+        left_first < right_second && right_first > left_second) {
+        printf("1\n");
+        *p_on_p = 1;
+    } else {
+        printf("0\n");
+        *p_on_p = 0;
+    }
+
     if (left_first < right_second && right_first > left_second &&
         bottom_first < top_second && top_first > bottom_second) {
         return 1;
@@ -79,44 +90,46 @@ void update_bullets(square* player){
 
 void update_position(square *player_1, square *player_2){																																				
     
+	int p_on_p;
+
 	if (player_1->control->left){																																										//Se o botão de movimentação para esquerda do controle do primeiro jogador está ativado... (!)
 		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a esquerda (!)
-		if (collision_2D(player_1, player_2)) square_move(player_1, -1, 0, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		if (collision_2D(player_1, player_2, &p_on_p)) square_move(player_1, -1, 0, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 		player_1->face = 0;
 	}
 	if (player_1->control->right){																																										//Se o botão de movimentação para direita do controle do primeir ojogador está ativado... (!)
 		square_move(player_1, 1, 1, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a direta (!)
-		if (collision_2D(player_1, player_2)) square_move(player_1, -1, 1, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		if (collision_2D(player_1, player_2, &p_on_p)) square_move(player_1, -1, 1, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 		player_1->face = 1;
 	}
 	if (player_1->control->up) {																																										//Se o botão de movimentação para cima do controle do primeiro jogador está ativado... (!)
 		square_move(player_1, 1, 2, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para cima (!)
-		if (collision_2D(player_1, player_2)) square_move(player_1, -1, 2, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		if (collision_2D(player_1, player_2, &p_on_p)) square_move(player_1, -1, 2, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
 	if (player_1->control->down && !player_1->is_jump && !player_1->is_faling){																																										//Se o botão de movimentação para baixo do controle do primeiro jogador está ativado... (!)
 		square_move(player_1, 1, 3, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a baixo (!)
-		if (collision_2D(player_1, player_2)) square_move(player_1, -1, 3, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		if (collision_2D(player_1, player_2, &p_on_p)) square_move(player_1, -1, 3, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
 
 	if (player_2->control->left){																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
 		square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
-		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 0, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		if (collision_2D(player_2, player_1, &p_on_p)) square_move(player_2, -1, 0, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 		player_2->face = 0;
 	}
 	
 	if (player_2->control->right){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
 		square_move(player_2, 1, 1, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a direita (!)
-		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 1, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		if (collision_2D(player_2, player_1, &p_on_p)) square_move(player_2, -1, 1, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 		player_2->face = 1;
 	}
 	
 	if (player_2->control->up){																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
 		square_move(player_2, 1, 2, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a cima (!)
-		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 2, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)			
+		if (collision_2D(player_2, player_1, &p_on_p)) square_move(player_2, -1, 2, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)			
 	}
 	if (player_2->control->down && !player_2->is_jump && !player_2->is_faling){																																										//Se o botão de movimentação para baixo do controle do segundo jogador está ativado... (!)
 		square_move(player_2, 1, 3, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a baixo (!)
-		if (collision_2D(player_2, player_1)) square_move(player_2, -1, 3, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+		if (collision_2D(player_2, player_1, &p_on_p)) square_move(player_2, -1, 3, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
 
 
@@ -153,7 +166,7 @@ void update_position(square *player_1, square *player_2){
 			player_1->is_jump = 0;
 		}
 	}
-	if (collision_2D(player_1, player_2)){
+	if (collision_2D(player_1, player_2, &p_on_p)){
 		player_1->y += JUMP_SPEED;
 		player_1->is_jump = 0;
 	}
@@ -163,7 +176,7 @@ void update_position(square *player_1, square *player_2){
 			player_1->is_faling = 0;
 		}
 	}
-	if (collision_2D(player_1, player_2)){
+	if (collision_2D(player_1, player_2, &p_on_p)){
 		player_1->y -= GRAVITY;
 	}
 
@@ -180,7 +193,7 @@ void update_position(square *player_1, square *player_2){
 			player_2->is_jump = 0;
 		}
 	}
-	if (collision_2D(player_2, player_1)){
+	if (collision_2D(player_2, player_1, &p_on_p)){
 		player_2->y += JUMP_SPEED;
 		player_2->is_jump = 0;
 	}
@@ -190,17 +203,17 @@ void update_position(square *player_1, square *player_2){
 			player_2->is_faling = 0;
 		}
 	}
-	if (collision_2D(player_2, player_1)){
+	if (collision_2D(player_2, player_1, &p_on_p)){
 		player_2->y -= GRAVITY;
 	}
 
 	/* SE ABAIXA */
-	if (player_1->control->crouch){
+	if (player_1->control->crouch && !p_on_p && !player_1->is_faling){
 		square_crouch(player_1);
 	} else {
 		square_stand(player_1);
 	}
-    if (player_2->control->crouch) {
+    if (player_2->control->crouch && !p_on_p && !player_2->is_faling) {
         square_crouch(player_2);
     } else {
         square_stand(player_2);
