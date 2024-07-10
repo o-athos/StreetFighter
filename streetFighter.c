@@ -47,10 +47,10 @@ unsigned char collision_2D(square *element_first, square *element_second, int *p
     // Verificar se um está em cima do outro
     if (bottom_first <= top_second && top_first >= bottom_second &&
         left_first < right_second && right_first > left_second) {
-        printf("1\n");
+        //printf("1\n");
         *p_on_p = 1;
     } else {
-        printf("0\n");
+        //printf("0\n");
         *p_on_p = 0;
     }
 
@@ -405,6 +405,13 @@ int main() {
 					
 					draw_health_bar(disp, player_1->health_bar);
 					draw_health_bar(disp, player_2->health_bar);
+
+					if (p1_score == 1)
+						al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));
+					if (p2_score == 1){
+						al_draw_filled_circle(X_SCREEN - 15, 25, 5, al_map_rgb(0, 0, 255));
+					}
+
 
 					for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet *)index->next){
 						al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));
