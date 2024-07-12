@@ -1,6 +1,6 @@
 /* 
 Compilação: 
-gcc streetFighter.c square.c joystick.c pistol.c bullet.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
+gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
 */
 
 #include <stdio.h>
@@ -36,18 +36,18 @@ unsigned char collision_2D(square *element_first, square *element_second, int *p
 
     float left_first = element_first->x - half_x_side_first;
     float right_first = element_first->x + half_x_side_first;
-    float top_first = element_first->y + half_y_side_first;
-    float bottom_first = element_first->y - half_y_side_first;
+    float top_first = element_first->y - half_y_side_first;
+    float bottom_first = element_first->y + half_y_side_first;
 
     float left_second = element_second->x - half_x_side_second;
     float right_second = element_second->x + half_x_side_second;
-    float top_second = element_second->y + half_y_side_second;
-    float bottom_second = element_second->y - half_y_side_second;
+    float top_second = element_second->y - half_y_side_second;
+    float bottom_second = element_second->y + half_y_side_second;
 
     // Verificar se um está em cima do outro
-    if (bottom_first <= top_second && top_first >= bottom_second &&
+    if (bottom_first >= top_second && top_first <= bottom_second &&
         left_first < right_second && right_first > left_second) {
-        //printf("1\n");
+        printf("1\n");
         *p_on_p = 1;
     } else {
         //printf("0\n");
@@ -55,7 +55,8 @@ unsigned char collision_2D(square *element_first, square *element_second, int *p
     }
 
     if (left_first < right_second && right_first > left_second &&
-        bottom_first < top_second && top_first > bottom_second) {
+        bottom_first > top_second && top_first < bottom_second) {
+			printf("colisaoooooooooooo\n");
         return 1;
     } else {
         return 0;
@@ -153,9 +154,9 @@ void update_position(square *player_1, square *player_2){
 
 
 
-
+	collision_2D(player_1, player_2, &p_on_p);
 	/* PULO DO PLAYER 1 */
-	if (player_1->control->jump){
+	if (player_1->control->jump && !p_on_p ){
 		square_jump(player_1, FLOOR);
 	}
 	
@@ -166,23 +167,22 @@ void update_position(square *player_1, square *player_2){
 			player_1->is_jump = 0;
 		}
 	}
-	if (collision_2D(player_1, player_2, &p_on_p)){
-		player_1->y += JUMP_SPEED;
-		player_1->is_jump = 0;
-	}
+
 	if (player_1->is_faling){
 		player_1->y += GRAVITY;
+		if (collision_2D(player_2, player_1, &p_on_p)){
+			printf("entrou\n");
+			player_1->y = player_2->y - player_2->y_side;
+		}
 		if (player_1->y >= FLOOR - 10){
 			player_1->is_faling = 0;
 		}
 	}
-	if (collision_2D(player_1, player_2, &p_on_p)){
-		player_1->y -= GRAVITY;
-	}
+
 
 
 	/* PULO DO PLAYER 2 */
-	if (player_2->control->jump){
+	if (player_2->control->jump && !p_on_p){
 		square_jump(player_2, FLOOR);
 	}
 	
@@ -193,27 +193,31 @@ void update_position(square *player_1, square *player_2){
 			player_2->is_jump = 0;
 		}
 	}
-	if (collision_2D(player_2, player_1, &p_on_p)){
-		player_2->y += JUMP_SPEED;
-		player_2->is_jump = 0;
-	}
+
 	if (player_2->is_faling){
+		printf("faling 2 %u\n", player_2->is_faling);
 		player_2->y += GRAVITY;
+		if (collision_2D(player_2, player_1, &p_on_p)){
+			printf("altura: %u\n", player_1->y_side);
+			printf("centro: %u\n", player_1->y);
+			printf("teto vermelho: %u\n", player_1->y - player_1->y_side/2);			
+			printf("pé do azul: %u\n", player_2->y + player_2->y_side/2);
+			player_2->y = player_1->y - player_1->y_side;
+	}
 		if (player_2->y >= FLOOR - 10){
 			player_2->is_faling = 0;
 		}
 	}
-	if (collision_2D(player_2, player_1, &p_on_p)){
-		player_2->y -= GRAVITY;
-	}
 
+
+	collision_2D(player_2, player_1, &p_on_p);
 	/* SE ABAIXA */
-	if (player_1->control->crouch && !p_on_p && !player_1->is_faling){
+	if (player_1->control->crouch && /*!p_on_p &&*/ !player_1->is_faling){
 		square_crouch(player_1);
 	} else {
 		square_stand(player_1);
 	}
-    if (player_2->control->crouch && !p_on_p && !player_2->is_faling) {
+    if (player_2->control->crouch && /*!p_on_p &&*/ !player_2->is_faling) {
         square_crouch(player_2);
     } else {
         square_stand(player_2);
