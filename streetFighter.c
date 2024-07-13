@@ -172,9 +172,10 @@ void update_position(square *player_1, square *player_2){
 		player_1->y += GRAVITY;
 		if (collision_2D(player_2, player_1, &p_on_p)){
 			printf("entrou\n");
-			player_1->y = player_2->y - player_2->y_side;
+			player_1->y = player_2->y - player_2->y_side/2 - player_1->y_side/2;
 		}
-		if (player_1->y >= FLOOR - 10){
+		if (player_1->y >= FLOOR - player_1->y_side/2){
+			player_1->y = FLOOR - player_1->y_side/2;
 			player_1->is_faling = 0;
 		}
 	}
@@ -197,14 +198,18 @@ void update_position(square *player_1, square *player_2){
 	if (player_2->is_faling){
 		printf("faling 2 %u\n", player_2->is_faling);
 		player_2->y += GRAVITY;
-		if (collision_2D(player_2, player_1, &p_on_p)){
-			printf("altura: %u\n", player_1->y_side);
-			printf("centro: %u\n", player_1->y);
+		if (collision_2D(player_1, player_2, &p_on_p)){
+			/*printf("player_1->y_side: %u\n", player_1->y_side);
+			printf("player_1->y: %u\n", player_1->y);
 			printf("teto vermelho: %u\n", player_1->y - player_1->y_side/2);			
 			printf("pé do azul: %u\n", player_2->y + player_2->y_side/2);
-			player_2->y = player_1->y - player_1->y_side;
-	}
-		if (player_2->y >= FLOOR - 10){
+			printf("centro azul antes: %u\n", player_2->y);*/
+			player_2->y = player_1->y - player_1->y_side/2 - player_2->y_side/2;
+			/*printf("pé do azul pós: %u\n", player_2->y + player_2->y_side/2);
+			printf("centro azul %u\n", player_2->y);*/
+		}
+		if (player_2->y >= FLOOR - player_2->y_side/2){
+			player_2->y = FLOOR - player_2->y_side/2;
 			player_2->is_faling = 0;
 		}
 	}
@@ -348,9 +353,9 @@ int main() {
 	int rounds = 0;
 	while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
 
-		square* player_1 = square_create(25, 40, 1, 50, FLOOR-10, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
+		square* player_1 = square_create(25, 40, 1, 50, FLOOR-20, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
 		if (!player_1) return 1;																//Verificação de erro na criação do quadrado do primeiro jogador
-		square* player_2 = square_create(25, 40, 0, X_SCREEN-50, FLOOR-10, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
+		square* player_2 = square_create(25, 40, 0, X_SCREEN-50, FLOOR-20, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 		if (!player_2) return 2;
 
 		player_1->health_bar = create_health_bar(10, 10, 400, 5, player_1->hp);

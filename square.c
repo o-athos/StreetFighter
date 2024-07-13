@@ -68,7 +68,7 @@ void square_shot(square *element){
 
 void square_jump(square *elem, unsigned short floor){
 
-    if (!elem->is_jump && elem->y == floor - 10){
+    if (!elem->is_jump && elem->y == floor - elem->y_side/2){
         elem->is_jump = 1;
     }
 
