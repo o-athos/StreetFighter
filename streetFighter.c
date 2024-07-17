@@ -1,6 +1,6 @@
 /* 
 Compilação: 
-gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
+gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character_selection.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
 */
 
 #include <stdio.h>
@@ -18,6 +18,7 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c -o street
 #include "joystick.h"
 #include "pistol.h"
 #include "bullet.h"
+#include "character_selection.h"
 
 #define X_SCREEN 1000
 #define Y_SCREEN 500
@@ -354,6 +355,10 @@ int main() {
 	int play_again = 1;
 	while (play_again){
 	
+		character *characters[2];
+    	choose_character(queue, font, characters, 1);
+    	choose_character(queue, font, characters, 2);
+
 		int p1_score = 0, p2_score = 0;
 		int rounds = 0;
 		while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
