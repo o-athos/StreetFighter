@@ -50,7 +50,7 @@ unsigned char collision_2D(square *element_first, square *element_second, int *p
         printf("1\n");
         *p_on_p = 1;
     } else {
-        //printf("0\n");
+        printf("0\n");
         *p_on_p = 0;
     }
 
@@ -92,8 +92,9 @@ void update_bullets(square* player){
 void update_position(square *player_1, square *player_2){																																				
     
 	int p_on_p;
-
-	if (player_1->control->left){																																										//Se o botão de movimentação para esquerda do controle do primeiro jogador está ativado... (!)
+	
+	if (player_1->control->left){	
+		printf("era p ir esq\n");																																									//Se o botão de movimentação para esquerda do controle do primeiro jogador está ativado... (!)
 		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a esquerda (!)
 		if (collision_2D(player_1, player_2, &p_on_p)) square_move(player_1, -1, 0, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 		player_1->face = 0;
@@ -349,151 +350,173 @@ int main() {
 
 	/* -------------------------INICIO DO JOGO COM ROUNDS --------------------------------*/
 
-	int p1_score = 0, p2_score = 0;
-	int rounds = 0;
-	while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
 
-		square* player_1 = square_create(25, 40, 1, 50, FLOOR-20, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
-		if (!player_1) return 1;																//Verificação de erro na criação do quadrado do primeiro jogador
-		square* player_2 = square_create(25, 40, 0, X_SCREEN-50, FLOOR-20, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
-		if (!player_2) return 2;
+	int play_again = 1;
+	while (play_again){
+	
+		int p1_score = 0, p2_score = 0;
+		int rounds = 0;
+		while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
 
-		player_1->health_bar = create_health_bar(10, 10, 400, 5, player_1->hp);
-		player_2->health_bar = create_health_bar(X_SCREEN - 410, 10, 400, 5, player_2->hp);
+			square* player_1 = square_create(25, 40, 1, 50, FLOOR-20, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
+			if (!player_1) return 1;																//Verificação de erro na criação do quadrado do primeiro jogador
+			square* player_2 = square_create(25, 40, 0, X_SCREEN-50, FLOOR-20, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
+			if (!player_2) return 2;
 
-		printf("p1:%d p2:%d\n", p1_score, p2_score);
+			player_1->health_bar = create_health_bar(10, 10, 400, 5, player_1->hp);
+			player_2->health_bar = create_health_bar(X_SCREEN - 410, 10, 400, 5, player_2->hp);
 
-		unsigned char p1_isDead = 0, p2_isDead = 0, round_over = 0;
-		ALLEGRO_EVENT event;
-		if (event.type == 42) break;
-		while(1){																																															//Laço principal do programa
-			al_wait_for_event(queue, &event);																																								//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
-			
-			if (round_over) break;
+			printf("p1:%d p2:%d\n", p1_score, p2_score);
 
-			if (p1_isDead || p2_isDead ){
-				al_clear_to_color(al_map_rgb(0, 0, 0));																																							
-				if (p1_isDead && p2_isDead) al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2 - 20, Y_SCREEN/2 - 15, 0, "EMPATE!");																					
-				else if (p2_isDead){
-					p1_score++;
-					printf("p1:%d p2:%d\n", p1_score, p2_score);
-					al_draw_text(font, al_map_rgb(255, 0, 0), X_SCREEN/2 - 90, Y_SCREEN/2-15, 0, "JOGADOR 1 GANHOU!");																				
+			unsigned char p1_isDead = 0, p2_isDead = 0, round_over = 0;
+			ALLEGRO_EVENT event;
+			if (event.type == 42) break;
+			while(1){																																															//Laço principal do programa
+				al_wait_for_event(queue, &event);																																								//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
+				
+				if (round_over) break;
+
+				if (p1_isDead || p2_isDead ){
+					al_clear_to_color(al_map_rgb(0, 0, 0));																																							
+					if (p1_isDead && p2_isDead) al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2 - 20, Y_SCREEN/2 - 15, 0, "EMPATE!");																					
+					else if (p2_isDead){
+						p1_score++;
+						printf("p1:%d p2:%d\n", p1_score, p2_score);
+						al_draw_text(font, al_map_rgb(255, 0, 0), X_SCREEN/2 - 90, Y_SCREEN/2-15, 0, "JOGADOR 1 GANHOU!");																				
+					}
+					else if (p1_isDead){
+						p2_score++;
+						al_draw_text(font, al_map_rgb(0, 0, 255), X_SCREEN/2 - 90, Y_SCREEN/2-15, 0, "JOGADOR 2 GANHOU!");
+					}																			
+					al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2 - 175, Y_SCREEN/2+20, 0, "PRESSIONE ENTER PARA SAIR");																					
+					al_flip_display();																																												
+
+					ALLEGRO_EVENT event;
+					while (1) {
+						al_wait_for_event(queue, &event);
+						if (event.type == ALLEGRO_EVENT_KEY_DOWN && event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+							round_over = 1;
+							break;
+						}
+					}		
 				}
-				else if (p1_isDead){
-					p2_score++;
-					al_draw_text(font, al_map_rgb(0, 0, 255), X_SCREEN/2 - 90, Y_SCREEN/2-15, 0, "JOGADOR 2 GANHOU!");
-				}																			
-				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2 - 175, Y_SCREEN/2+20, 0, "PRESSIONE ENTER PARA SAIR");																					
-				al_flip_display();																																												
+				else {
+					if (event.type == 30){
+						update_position(player_1, player_2);	
+						
+						p1_isDead = check_kill(player_2, player_1);
+						p2_isDead = check_kill(player_1, player_2);
+						if (player_1->hp == 0)
+							p1_isDead = 1;
+						if (player_2->hp == 0)
+							p2_isDead = 1;
+																																										
+						al_clear_to_color(al_map_rgb(0, 0, 0));																																																																									//Substitui tudo que estava desenhado na tela por um fundo preto
+						al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
+						al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+						
+						draw_health_bar(disp, player_1->health_bar);
+						draw_health_bar(disp, player_2->health_bar);
 
-				//if ((event.type == 10) && (event.keyboard.keycode == ALLEGRO_KEY_ENTER)) break;																																
-				//else if (event.type == 42) break;
-				ALLEGRO_EVENT event;
-    			while (1) {
-        			al_wait_for_event(queue, &event);
-        			if (event.type == ALLEGRO_EVENT_KEY_DOWN && event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-            			round_over = 1;
-						break;
-        			}
-    			}		
+						if (p1_score == 1)
+							al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));
+						if (p2_score == 1){
+							al_draw_filled_circle(X_SCREEN - 15, 25, 5, al_map_rgb(0, 0, 255));
+						}
+
+
+						for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet *)index->next){
+							al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));
+						}
+						if (player_1->gun->timer) player_1->gun->timer--;
+
+						for (bullet *index = player_2->gun->shots; index != NULL; index = (bullet *)index->next){
+							al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(0, 0, 255));
+						}
+						if (player_2->gun->timer) player_2->gun->timer--;
+
+
+						if (player_1->punch_timer) player_1->punch_timer--;
+						if (player_2->punch_timer) player_2->punch_timer--;	
+
+						if (player_1->kick_timer) player_1->kick_timer--;
+						if (player_2->kick_timer) player_2->kick_timer--;	
+
+						al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
+					}
+					else if ((event.type == 10) || (event.type == 12)){	
+
+						if (event.keyboard.keycode == ALLEGRO_KEY_A) joystick_left(player_1->control);																															
+						else if (event.keyboard.keycode == ALLEGRO_KEY_D) joystick_right(player_1->control);																													
+						//else if (event.keyboard.keycode == ALLEGRO_KEY_W) joystick_up(player_1->control);																													
+						else if (event.keyboard.keycode == ALLEGRO_KEY_S) joystick_crouch(player_1->control);		
+
+						else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) joystick_left(player_2->control);																											
+						else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) joystick_right(player_2->control);																													
+						//else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_up(player_2->control);																														
+						else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) joystick_crouch(player_2->control);
+
+						else if (event.keyboard.keycode == ALLEGRO_KEY_C)	joystick_fire(player_1->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_fire(player_2->control);
+
+						else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE) joystick_jump(player_1->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_jump(player_2->control);
+
+						else if (event.keyboard.keycode == ALLEGRO_KEY_E) joystick_parry(player_1->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_parry(player_2->control);
+						
+						else if (event.keyboard.keycode == ALLEGRO_KEY_Q) joystick_punch(player_1->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_punch(player_2->control);
+
+						else if (event.keyboard.keycode == ALLEGRO_KEY_X) joystick_kick(player_1->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_DELETE) joystick_kick(player_2->control);
+					}
+					else if (event.type == 42) break;																    
+				}
 			}
-			else {
-				if (event.type == 30){
-					update_position(player_1, player_2);	
-					
-					p1_isDead = check_kill(player_2, player_1);
-					p2_isDead = check_kill(player_1, player_2);
-					if (player_1->hp == 0)
-						p1_isDead = 1;
-					if (player_2->hp == 0)
-						p2_isDead = 1;
-																																									
-					al_clear_to_color(al_map_rgb(0, 0, 0));																																																																									//Substitui tudo que estava desenhado na tela por um fundo preto
-					al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
-					al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
-					
-					draw_health_bar(disp, player_1->health_bar);
-					draw_health_bar(disp, player_2->health_bar);
+			rounds++;
+			printf("round\n");
+			square_destroy(player_1);																																												
+			square_destroy(player_2);
 
-					if (p1_score == 1)
-						al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));
-					if (p2_score == 1){
-						al_draw_filled_circle(X_SCREEN - 15, 25, 5, al_map_rgb(0, 0, 255));
-					}
+		}
 
 
-					for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet *)index->next){
-						al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));
-					}
-					if (player_1->gun->timer) player_1->gun->timer--;
+		/* EXIBIÇÂO DO VENCEDOR */
+		al_clear_to_color(al_map_rgb(0, 0, 0));
+		if (p1_score > p2_score) {
+			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 1 Wins!");
+		} else {
+			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 2 Wins!");
+		}
+		al_flip_display();
 
-					for (bullet *index = player_2->gun->shots; index != NULL; index = (bullet *)index->next){
-						al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(0, 0, 255));
-					}
-					if (player_2->gun->timer) player_2->gun->timer--;
-
-
-					if (player_1->punch_timer) player_1->punch_timer--;
-					if (player_2->punch_timer) player_2->punch_timer--;	
-
-					if (player_1->kick_timer) player_1->kick_timer--;
-					if (player_2->kick_timer) player_2->kick_timer--;	
-
-					al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
-				}
-				else if ((event.type == 10) || (event.type == 12)){	
-
-					if (event.keyboard.keycode == ALLEGRO_KEY_A) joystick_left(player_1->control);																															
-					else if (event.keyboard.keycode == ALLEGRO_KEY_D) joystick_right(player_1->control);																													
-					//else if (event.keyboard.keycode == ALLEGRO_KEY_W) joystick_up(player_1->control);																													
-					else if (event.keyboard.keycode == ALLEGRO_KEY_S) joystick_crouch(player_1->control);		
-
-					else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) joystick_left(player_2->control);																											
-					else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) joystick_right(player_2->control);																													
-					//else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_up(player_2->control);																														
-					else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) joystick_crouch(player_2->control);
-
-					else if (event.keyboard.keycode == ALLEGRO_KEY_C)	joystick_fire(player_1->control);
-					else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_fire(player_2->control);
-
-					else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE) joystick_jump(player_1->control);
-					else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_jump(player_2->control);
-
-					else if (event.keyboard.keycode == ALLEGRO_KEY_E) joystick_parry(player_1->control);
-					else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_parry(player_2->control);
-					
-					else if (event.keyboard.keycode == ALLEGRO_KEY_Q) joystick_punch(player_1->control);
-					else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_punch(player_2->control);
-
-					else if (event.keyboard.keycode == ALLEGRO_KEY_X) joystick_kick(player_1->control);
-					else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_DELETE) joystick_kick(player_2->control);
-				}
-				else if (event.type == 42) break;																    
+		ALLEGRO_EVENT event;
+		while (1) {
+			al_wait_for_event(queue, &event);
+			if (event.type == ALLEGRO_EVENT_KEY_DOWN && event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+				break;
 			}
 		}
-		rounds++;
-		printf("round\n");
-		square_destroy(player_1);																																												
-		square_destroy(player_2);
 
-	}
+		/* PERGUNTA SE QUER JOGAR NOVAMENTE */
+        al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2 + 40, ALLEGRO_ALIGN_CENTRE, "Pressione ENTER para jogar novamente ou ESC para sair");
+        al_flip_display();
 
-
-    /* EXIBIÇÂO DO VENCEDOR */
-    al_clear_to_color(al_map_rgb(0, 0, 0));
-    if (p1_score > p2_score) {
-        al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 1 Wins!");
-    } else {
-        al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 2 Wins!");
-    }
-    al_flip_display();
-
-	ALLEGRO_EVENT event;
-	while (1) {
-    	al_wait_for_event(queue, &event);
-    	if (event.type == ALLEGRO_EVENT_KEY_DOWN && event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-        	break;
-    	}
+        
+        int decision_made = 0;
+        while (!decision_made) {
+            al_wait_for_event(queue, &event);
+            if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+                if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                    play_again = 1;
+                    decision_made = 1;
+                } else if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+                    play_again = 0;
+                    decision_made = 1;
+                }
+            }
+        }
 	}
 
     al_destroy_font(font);
