@@ -29,6 +29,7 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 
 unsigned char collision_2D(square *element_first, square *element_second, int *p_on_p) {
     
+	    
 	float half_x_side_first = element_first->x_side / 2.0;
     float half_y_side_first = element_second->y_side / 2.0;
 
@@ -94,8 +95,7 @@ void update_position(square *player_1, square *player_2){
     
 	int p_on_p;
 	
-	if (player_1->control->left){	
-		printf("era p ir esq\n");																																									//Se o botão de movimentação para esquerda do controle do primeiro jogador está ativado... (!)
+	if (player_1->control->left){																																										//Se o botão de movimentação para esquerda do controle do primeiro jogador está ativado... (!)
 		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a esquerda (!)
 		if (collision_2D(player_1, player_2, &p_on_p)) square_move(player_1, -1, 0, X_SCREEN, FLOOR);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 		player_1->face = 0;
@@ -173,8 +173,12 @@ void update_position(square *player_1, square *player_2){
 	if (player_1->is_faling){
 		player_1->y += GRAVITY;
 		if (collision_2D(player_2, player_1, &p_on_p)){
+			player_1->y -= GRAVITY;
 			printf("entrou\n");
-			player_1->y = player_2->y - player_2->y_side/2 - player_1->y_side/2;
+			if (!player_2->is_jump){
+				printf("aqui\n");
+				player_1->y = player_2->y - player_2->y_side/2 - player_1->y_side/2;
+			}
 		}
 		if (player_1->y >= FLOOR - player_1->y_side/2){
 			player_1->y = FLOOR - player_1->y_side/2;
@@ -370,6 +374,33 @@ int main() {
 
 			player_1->health_bar = create_health_bar(10, 10, 400, 5, player_1->hp);
 			player_2->health_bar = create_health_bar(X_SCREEN - 410, 10, 400, 5, player_2->hp);
+
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+			al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
+			al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+
+			draw_health_bar(disp, player_1->health_bar);
+			draw_health_bar(disp, player_2->health_bar);
+
+			char round_message[20];
+
+			sprintf(round_message, "Round %d", rounds + 1);
+			//al_clear_to_color(al_map_rgb(0, 0, 0));
+			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, round_message);
+			al_flip_display();
+			al_rest(1.0);
+
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+
+			al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
+			al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+
+			draw_health_bar(disp, player_1->health_bar);
+			draw_health_bar(disp, player_2->health_bar);
+
+			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
+			al_flip_display();
+			al_rest(1.0);	
 
 			printf("p1:%d p2:%d\n", p1_score, p2_score);
 
