@@ -49,16 +49,13 @@ unsigned char collision_2D(square *element_first, square *element_second, int *p
     // Verificar se um está em cima do outro
     if (bottom_first >= top_second && top_first <= bottom_second &&
         left_first < right_second && right_first > left_second) {
-        printf("1\n");
         *p_on_p = 1;
     } else {
-        printf("0\n");
         *p_on_p = 0;
     }
 
     if (left_first < right_second && right_first > left_second &&
         bottom_first > top_second && top_first < bottom_second) {
-			printf("colisaoooooooooooo\n");
         return 1;
     } else {
         return 0;
@@ -202,7 +199,7 @@ void update_position(square *player_1, square *player_2){
 	}
 
 	if (player_2->is_faling){
-		printf("faling 2 %u\n", player_2->is_faling);
+		//printf("faling 2 %u\n", player_2->is_faling);
 		player_2->y += GRAVITY;
 		if (collision_2D(player_1, player_2, &p_on_p)){
 			/*printf("player_1->y_side: %u\n", player_1->y_side);
@@ -326,6 +323,11 @@ int main() {
     // Iniciar temporizador
     al_start_timer(timer);
 
+
+	ALLEGRO_BITMAP *title_game = al_load_bitmap("images/street_fighter.png");
+    int desired_width = 500;
+    int desired_height = 200;
+
     // Variável para controlar o estado do menu
     bool menu = true;
 
@@ -337,8 +339,18 @@ int main() {
         // Desenhar o menu na tela
         al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpar a tela
 
-        al_draw_text(font, al_map_rgb(255, 165, 0), 500, 200, ALLEGRO_ALIGN_CENTER, "Street Fighter"); // Título do jogo
-        al_draw_text(font, al_map_rgb(255, 255, 255), 500, 300, ALLEGRO_ALIGN_CENTER, "Pressione Enter para jogar"); // Mensagem para pressionar Enter
+		int image_width = al_get_bitmap_width(title_game);
+        int image_height = al_get_bitmap_height(title_game);
+		al_draw_scaled_bitmap(
+			title_game,
+			0, 0, // Fonte X, Y
+			image_width, image_height, // Largura e altura da fonte
+			(1000 - desired_width) / 2, (600 - desired_height) / 3, // Destino X, Y
+			desired_width, desired_height, // Largura e altura desejadas
+			0 // Nenhuma flag
+		);
+
+        al_draw_text(font, al_map_rgb(255, 255, 255), 500, 400, ALLEGRO_ALIGN_CENTER, "Pressione Enter para jogar"); // Mensagem para pressionar Enter
 
         al_flip_display(); // Atualizar o display
 
@@ -402,7 +414,6 @@ int main() {
 			al_flip_display();
 			al_rest(1.0);	
 
-			printf("p1:%d p2:%d\n", p1_score, p2_score);
 
 			unsigned char p1_isDead = 0, p2_isDead = 0, round_over = 0;
 			ALLEGRO_EVENT event;
