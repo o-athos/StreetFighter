@@ -31,26 +31,26 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 
 void update_bullets(square* player){
 
-    bullet *previous = NULL;																																												//Variável auxiliar para salvar a posição imediatamente anterior na fila (!)
-	for (bullet *index = player->gun->shots; index != NULL;){																																				//Para cada projétil presente na lista de projéteis disparados (!)
-		if (!index->trajectory) index->x -= BULLET_MOVE;																																					//Se a trajetória for para a esquerda, atualiza a posição para a esquerda (!)
-		else if (index->trajectory == 1) index->x += BULLET_MOVE;																																			//Se a trajetória for para a direita, atualiza a posição para a esquerda (!)
+    bullet *previous = NULL;																																												
+	for (bullet *index = player->gun->shots; index != NULL;){																																				
+		if (!index->trajectory) index->x -= BULLET_MOVE;																																					
+		else if (index->trajectory == 1) index->x += BULLET_MOVE;																																			
 		
-		if ((index->x < 0) || (index->x > X_SCREEN)){																																						//Verifica se o projétil saiu das bordas da janela (!)
-			if (previous){																																													//Verifica se não é o primeiro elemento da lista de projéteis (!)
-				previous->next = index->next;																																								//Se não for, salva o próximo projétil (!)
-				bullet_destroy(index);																																										//Chama o destrutor para o projétil atual (!)
-				index = (bullet*) previous->next;																																							//Atualiza para o próximo projétil (!)
+		if ((index->x < 0) || (index->x > X_SCREEN)){																																						
+			if (previous){																																													
+				previous->next = index->next;																																								
+				bullet_destroy(index);																																										
+				index = (bullet*) previous->next;																																							
 			}
-			else {																																															//Se for o primeiro projétil da lista (!)
-				player->gun->shots = (bullet*) index->next;																																					//Atualiza o projétil no início da lista (!)
-				bullet_destroy(index);																																										//Chama o destrutor para o projétil atual (!)
-				index = player->gun->shots;																																									//Atualiza para o próximo projétil (!)
+			else {																																															
+				player->gun->shots = (bullet*) index->next;																																					
+				bullet_destroy(index);																																									
+				index = player->gun->shots;																																									
 			}
 		}
-		else{																																																//Se não saiu da tela (!)
-			previous = index;																																												//Atualiza o projétil anterior (para a próxima iteração) (!)
-			index = (bullet*) index->next;																																									//Atualiza para o próximo projétil (!)
+		else{																																																
+			previous = index;																																												
+			index = (bullet*) index->next;																																									
 		}
 	}
 }
@@ -59,55 +59,55 @@ void update_position(square *player_1, square *player_2){
     
 	int p_on_p;
 	
-	if (player_1->control->left){																																										//Se o botão de movimentação para esquerda do controle do primeiro jogador está ativado... (!)
-		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a esquerda (!)																										//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
-		player_1->face = 0;
+	if (player_1->control->left){																																										
+		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																																												
+			player_1->face = 0;
 	}
-	if (player_1->control->right){																																										//Se o botão de movimentação para direita do controle do primeir ojogador está ativado... (!)
-		square_move(player_1, 1, 1, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a direta (!)																										//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+	if (player_1->control->right){																																										
+		square_move(player_1, 1, 1, X_SCREEN, FLOOR);																																				
 		player_1->face = 1;
 	}
-	if (player_1->control->up) {																																										//Se o botão de movimentação para cima do controle do primeiro jogador está ativado... (!)
-		square_move(player_1, 1, 2, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para cima (!)																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+	if (player_1->control->up) {																																										
+		square_move(player_1, 1, 2, X_SCREEN, FLOOR);																																																															
 	}
-	if (player_1->control->down && !player_1->is_jump && !player_1->is_faling){																																										//Se o botão de movimentação para baixo do controle do primeiro jogador está ativado... (!)
-		square_move(player_1, 1, 3, X_SCREEN, FLOOR);																																				//Move o quadrado do primeiro jogador para a baixo (!)																										//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+	if (player_1->control->down && !player_1->is_jump && !player_1->is_faling){																																										
+		square_move(player_1, 1, 3, X_SCREEN, FLOOR);																																																												
 	}
 
-	if (player_2->control->left){																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
-		square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+	if (player_2->control->left){
+		square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																																															
 		player_2->face = 0;
 	}
 	
-	if (player_2->control->right){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
-		square_move(player_2, 1, 1, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a direita (!)																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+	if (player_2->control->right){ 																																										
+		square_move(player_2, 1, 1, X_SCREEN, FLOOR);
 		player_2->face = 1;
 	}
 	
-	if (player_2->control->up){																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
-		square_move(player_2, 1, 2, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a cima (!)																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)			
+	if (player_2->control->up){																																											
+		square_move(player_2, 1, 2, X_SCREEN, FLOOR);																													
 	}
-	if (player_2->control->down && !player_2->is_jump && !player_2->is_faling){																																										//Se o botão de movimentação para baixo do controle do segundo jogador está ativado... (!)
-		square_move(player_2, 1, 3, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a baixo (!)																										//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+	if (player_2->control->down && !player_2->is_jump && !player_2->is_faling){																																										
+		square_move(player_2, 1, 3, X_SCREEN, FLOOR);																																																													
 	}
 
 
 
 	/* TIRO */
-    if (player_1->control->fire){																																											//Verifica se o primeiro jogador está atirando (!)
-		if (!player_1->gun->timer){																																											//Verifica se a arma do primeiro jogador não está em cooldown (!)
-			square_shot(player_1); 																																											//Se não estiver, faz um disparo (!)
-			player_1->gun->timer = PISTOL_FIRE_RATE;																																							//Inicia o cooldown da arma (!)
+    if (player_1->control->fire){																																											
+		if (!player_1->gun->timer){																																											
+			square_shot(player_1); 																																											
+			player_1->gun->timer = PISTOL_FIRE_RATE;																																							
 		} 
 	}
 
-	if (player_2->control->fire){																																											//Verifica se o segundo jogador está atirando (!)
-		if (!player_2->gun->timer){																																											//Verifica se a arma do segundo jogador não está em cooldown (!)
-			square_shot(player_2);																																											//Se não estiver, faz um disparo (!)
-			player_2->gun->timer = PISTOL_FIRE_RATE;																																							//Inicia o cooldown da arma (!)
+	if (player_2->control->fire){																																											
+		if (!player_2->gun->timer){																																											
+			square_shot(player_2);																																											
+			player_2->gun->timer = PISTOL_FIRE_RATE;																																							
 		}
 	}
-	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador (!)
+	update_bullets(player_1);																																												
 	update_bullets(player_2);
 
 
