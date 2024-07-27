@@ -19,6 +19,7 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 #include "pistol.h"
 #include "bullet.h"
 #include "character_selection.h"
+#include "sprites.h"
 
 #define X_SCREEN 1000
 #define Y_SCREEN 500
@@ -313,6 +314,11 @@ int main() {
     	choose_character(queue, font, characters, 1);
     	choose_character(queue, font, characters, 2);
 
+		Character* character1 = load_character("sprites/ken", 5, 4, 5, 5, 3, 100, 80);
+
+		ALLEGRO_BITMAP* teste = NULL;
+		teste = al_load_bitmap("sprites/ken/parado.png");
+
 		int p1_score = 0, p2_score = 0;
 		int rounds = 0;
 		while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
@@ -352,6 +358,10 @@ int main() {
 			al_flip_display();
 			al_rest(1.0);	
 
+			// Tempo inicial
+			double last_time = al_get_time();
+			double current_time;
+			float delta_time;
 
 			unsigned char p1_isDead = 0, p2_isDead = 0, round_over = 0;
 			ALLEGRO_EVENT event;
@@ -359,6 +369,12 @@ int main() {
 			while(1){																																															//Laço principal do programa
 				al_wait_for_event(queue, &event);																																								//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
 				
+
+				// Calcular delta_time
+				current_time = al_get_time();
+				delta_time = (float)(current_time - last_time);
+				last_time = current_time;
+
 				if (round_over) break;
 
 				if (p1_isDead || p2_isDead ){
@@ -402,6 +418,8 @@ int main() {
 						
 						draw_health_bar(disp, player_1->health_bar);
 						draw_health_bar(disp, player_2->health_bar);
+
+						draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, delta_time);
 
 						if (p1_score == 1)
 							al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));
