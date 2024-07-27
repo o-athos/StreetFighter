@@ -3,6 +3,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include "joystick.h"
 
 
 
@@ -11,6 +12,8 @@ typedef enum{
     PUNCHING,
     JUMPING,
     IDLE,
+    KICKING,
+    CROUCH,
 } StatusCharacter;
 
 
@@ -28,6 +31,7 @@ typedef struct {
     Animation punching;
     Animation jumping;
     Animation kicking;
+    Animation crouching;
     StatusCharacter current_status;
     int current_frame;
     float time_to_next_frame;
@@ -35,12 +39,14 @@ typedef struct {
 
 
 // Funções para carregar e destruir sprites
-Character* load_character(const char* caminho_base, int walking_frames, int idle_frames, int punching_frames, int kick_frames, int jumping_frames, int largura_frame, int altura_frame);
+Character* load_character(const char* caminho_base, int walking_frames, int idle_frames, int crouching_frames, int punching_frames, int kick_frames, int jumping_frames, int largura_frame, int altura_frame);
 
 // Destroi
 void destroy_character(Character* character);
 
 // Função para desenhar a animação
 void draw_animation(Character* character, float x, float y, float delta_time);
+
+void update_character_status(Character* character, joystick* control);
 
 #endif

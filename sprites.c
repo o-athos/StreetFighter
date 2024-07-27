@@ -47,7 +47,7 @@ static Animation load_animation (const char* path, int num_frames, int largura_f
     return animation;
 }
 
-Character* load_character (const char* base_folder, int walk_frames, int idle_frames, int punch_frames, int kick_frames, int jump_frames, int largura_frame, int altura_frame){
+Character* load_character (const char* base_folder, int walk_frames, int idle_frames, int crouching_frames, int punch_frames, int kick_frames, int jump_frames, int largura_frame, int altura_frame){
     Character* character = (Character*)malloc(sizeof(Character));
     if (!character){
         printf("erro ao alocar memoria para o personagem\n");
@@ -56,7 +56,7 @@ Character* load_character (const char* base_folder, int walk_frames, int idle_fr
 
     char path[256];
 
-    snprintf(path, sizeof(path), "%s/walk.png", base_folder);
+    snprintf(path, sizeof(path), "%s/walking.png", base_folder);
     character->walking = load_animation(path, walk_frames, largura_frame, altura_frame, 0.1f);
 
     snprintf(path, sizeof(path), "%s/jump.png", base_folder);
@@ -68,8 +68,11 @@ Character* load_character (const char* base_folder, int walk_frames, int idle_fr
     snprintf(path, sizeof(path), "%s/kick.png", base_folder);
     character->kicking = load_animation(path, kick_frames, largura_frame, altura_frame, 0.1f);
 
-    snprintf(path, sizeof(path), "%s/parado.png", base_folder);
+    snprintf(path, sizeof(path), "%s/idle.png", base_folder);
     character->idle = load_animation(path, idle_frames, largura_frame, altura_frame, 0.1f);
+
+    snprintf(path, sizeof(path), "%s/crouch.png", base_folder);
+    character->crouching = load_animation(path, crouching_frames, largura_frame, altura_frame, 0.1f);
 
     character->current_status = IDLE;
     character->current_frame = 0;
@@ -118,11 +121,17 @@ void draw_animation (Character* character, float x, float y, float delta_time){
         case IDLE:
             current_animation = &character->idle;
             break;
+        case KICKING:
+            current_animation = &character->kicking;
+            break;
+        case CROUCH:
+            current_animation = &character->crouching;
+            break;
         default:
             current_animation = &character->idle;
             break;
     }
-    printf("aqui\n");
+
     character->time_to_next_frame -= delta_time;
     if (character->time_to_next_frame <= 0){
         character->current_frame = (character->current_frame + 1) % current_animation->num_frames;
@@ -141,4 +150,61 @@ void draw_animation (Character* character, float x, float y, float delta_time){
 
     al_draw_bitmap(current_animation->frames[character->current_frame], x, y, 0);
     
+}
+
+
+void update_character_status(Character* character, joystick* control) {
+    int previous_status = character->current_status;
+    
+    if (control->right) {
+        character->current_status = WALKING;
+    } else if (control->left) {
+        // Supondo que há uma animação para mover para a esquerda
+        character->current_status = WALKING;
+    } else if (control->crouch){
+        character->current_status = CROUCH;
+    } else if (control->jump) {
+        character->current_status = JUMPING;
+    }
+    else if (control->kick){
+        character->current_status = KICKING;
+    }
+    else
+        character->current_status = IDLE;
+
+    // Somente atualize o frame e o tempo se o status mudou
+    if (character->current_status != previous_status) {
+        // Verifique o número de frames da nova animação
+        Animation* new_animation;
+        switch (character->current_status) {
+            case WALKING:
+                new_animation = &character->walking;
+                break;
+            case PUNCHING:
+                new_animation = &character->punching;
+                break;
+            case JUMPING:
+                new_animation = &character->jumping;
+                break;
+            case IDLE:
+                new_animation = &character->idle;
+                break;
+            case KICKING:
+                new_animation = &character->kicking;
+                break;
+            case CROUCH:
+                new_animation = &character->crouching;
+                break;
+            default:
+                new_animation = &character->idle;
+                break;
+        }
+
+        // Certifique-se de que current_frame está dentro dos limites válidos
+        if (character->current_frame >= new_animation->num_frames) {
+            character->current_frame = 0;  // Reinicie o frame se estiver fora dos limites
+        }
+
+        character->time_to_next_frame = new_animation->frame_duration;
+    }
 }

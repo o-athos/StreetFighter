@@ -314,10 +314,7 @@ int main() {
     	choose_character(queue, font, characters, 1);
     	choose_character(queue, font, characters, 2);
 
-		Character* character1 = load_character("sprites/ken", 5, 4, 5, 5, 3, 100, 80);
-
-		ALLEGRO_BITMAP* teste = NULL;
-		teste = al_load_bitmap("sprites/ken/parado.png");
+		Character* character1 = load_character("sprites/ken", 5, 4, 1, 5, 3, 7, 100, 80);
 
 		int p1_score = 0, p2_score = 0;
 		int rounds = 0;
@@ -404,7 +401,9 @@ int main() {
 				else {
 					if (event.type == 30){
 						update_position(player_1, player_2);	
-						
+
+						update_character_status(character1, player_1->control);
+
 						p1_isDead = check_kill(player_2, player_1);
 						p2_isDead = check_kill(player_1, player_2);
 						if (player_1->hp == 0)
@@ -450,7 +449,7 @@ int main() {
 					else if ((event.type == 10) || (event.type == 12)){	
 
 						if (event.keyboard.keycode == ALLEGRO_KEY_A) joystick_left(player_1->control);																															
-						else if (event.keyboard.keycode == ALLEGRO_KEY_D) joystick_right(player_1->control);																													
+						else if (event.keyboard.keycode == ALLEGRO_KEY_D) joystick_right(player_1->control);							
 						//else if (event.keyboard.keycode == ALLEGRO_KEY_W) joystick_up(player_1->control);																													
 						else if (event.keyboard.keycode == ALLEGRO_KEY_S) joystick_crouch(player_1->control);		
 
