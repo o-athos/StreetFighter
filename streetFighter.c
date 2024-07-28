@@ -263,6 +263,8 @@ int main() {
 
 
 	ALLEGRO_BITMAP *title_game = al_load_bitmap("images/street_fighter.png");
+	ALLEGRO_BITMAP *pause_image = al_load_bitmap("images/pause.png");
+
     int desired_width = 500;
     int desired_height = 200;
 
@@ -367,7 +369,19 @@ int main() {
 				
 				if (pause) {
 					al_clear_to_color(al_map_rgb(0, 0, 0));
-					al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "PAUSED");
+					//al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "PAUSED");
+
+					int image_width = al_get_bitmap_width(pause_image);
+					int image_height = al_get_bitmap_height(pause_image);
+					al_draw_scaled_bitmap(
+						pause_image,
+						0, 0, // Fonte X, Y
+						image_width, image_height, // Largura e altura da fonte
+						0, 0, // Destino X, Y
+						X_SCREEN, Y_SCREEN, // Largura e altura desejadas
+						0 // Nenhuma flag
+					);
+
 					al_flip_display();
 					
 					// Esperar até que o botão de pausa seja pressionado novamente
@@ -410,13 +424,6 @@ int main() {
 				}
 				else {
 					if (event.type == 30){
-
-												
-						if (pause) {
-							al_clear_to_color(al_map_rgb(0, 0, 0));
-							al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "PAUSED");
-							al_flip_display();
-						}
 
 						update_position(player_1, player_2);	
 
