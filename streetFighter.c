@@ -60,11 +60,11 @@ void update_position(square *player_1, square *player_2){
     
 	int p_on_p;
 	
-	if (player_1->control->left){																																										
+	if (player_1->control->left && !player_1->is_crouching){																																										
 		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																																												
 			player_1->face = 0;
 	}
-	if (player_1->control->right){																																										
+	if (player_1->control->right && !player_1->is_crouching){																																										
 		square_move(player_1, 1, 1, X_SCREEN, FLOOR);																																				
 		player_1->face = 1;
 	}
@@ -75,12 +75,12 @@ void update_position(square *player_1, square *player_2){
 		square_move(player_1, 1, 3, X_SCREEN, FLOOR);																																																												
 	}
 
-	if (player_2->control->left){
+	if (player_2->control->left && !player_2->is_crouching){
 		square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																																															
 		player_2->face = 0;
 	}
 	
-	if (player_2->control->right){ 																																										
+	if (player_2->control->right && !player_2->is_crouching){ 																																										
 		square_move(player_2, 1, 1, X_SCREEN, FLOOR);
 		player_2->face = 1;
 	}

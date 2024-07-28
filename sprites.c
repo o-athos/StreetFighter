@@ -156,10 +156,9 @@ void draw_animation (Character* character, float x, float y, float delta_time){
 void update_character_status(Character* character, square* player) {
     int previous_status = character->current_status;
     
-    if (player->control->right) {
+    if (player->control->right && !player->is_crouching) {
         character->current_status = WALKING;
-    } else if (player->control->left) {
-        // Supondo que há uma animação para mover para a esquerda
+    } else if (player->control->left && !player->is_crouching) {
         character->current_status = WALKING;
     } else if (player->control->crouch){
         character->current_status = CROUCH;
