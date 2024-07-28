@@ -21,6 +21,8 @@ square* square_create(unsigned char x_side, unsigned char y_side, unsigned char 
     new_element->is_jump = 0;
     new_element->is_faling = 0;
     new_element->is_crouching = 0;
+    new_element->is_kicking = 0;
+    new_element->is_punching = 0;
     new_element->punch_timer = 0;
     new_element->kick_timer = 0;   
     new_element->control = joystick_create();

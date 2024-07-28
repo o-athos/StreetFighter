@@ -21,6 +21,8 @@ typedef struct
     int is_jump;
     int is_faling;
     int is_crouching;
+    int is_punching;
+    int is_kicking;
     unsigned char punch_timer;
     unsigned char kick_timer;
     joystick* control;

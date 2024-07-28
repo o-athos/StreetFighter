@@ -24,7 +24,7 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 #define X_SCREEN 1000
 #define Y_SCREEN 500
 #define FLOOR 400
-#define HIGH_JUMP 325
+#define HIGH_JUMP 300
 #define JUMP_SPEED 10
 #define GRAVITY 5
 
@@ -57,8 +57,6 @@ void update_bullets(square* player){
 }
 
 void update_position(square *player_1, square *player_2){																																				
-    
-	int p_on_p;
 	
 	if (player_1->control->left && !player_1->is_crouching){																																										
 		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																																												
@@ -114,7 +112,7 @@ void update_position(square *player_1, square *player_2){
 
 
 	/* PULO DO PLAYER 1 */
-	if (player_1->control->jump /*&& !p_on_p*/ ){
+	if (player_1->control->jump ){
 		square_jump(player_1, FLOOR);
 	}
 	
@@ -137,7 +135,7 @@ void update_position(square *player_1, square *player_2){
 
 
 	/* PULO DO PLAYER 2 */
-	if (player_2->control->jump && !p_on_p){
+	if (player_2->control->jump){
 		square_jump(player_2, FLOOR);
 	}
 	
@@ -175,6 +173,7 @@ void update_position(square *player_1, square *player_2){
 	if (player_1->control->punch){
 		if (!player_1->punch_timer){
 			square_punch(player_1, player_2);
+			player_1->is_punching = 1;
 			player_1->punch_timer = PUNCH_COOLDOWN;
 		}
 	}
@@ -314,7 +313,7 @@ int main() {
     	choose_character(queue, font, characters, 1);
     	choose_character(queue, font, characters, 2);
 
-		Character* character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 100, 90);
+		Character* character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 100, 90);
 
 		int p1_score = 0, p2_score = 0;
 		int rounds = 0;
@@ -360,13 +359,30 @@ int main() {
 			double current_time;
 			float delta_time;
 
-			unsigned char p1_isDead = 0, p2_isDead = 0, round_over = 0;
+			unsigned char p1_isDead = 0, p2_isDead = 0, round_over = 0, pause = 0;
 			ALLEGRO_EVENT event;
 			if (event.type == 42) return 1;
 			while(1){																																															//Laço principal do programa
 				al_wait_for_event(queue, &event);																																								//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
 				
-
+				if (pause) {
+					al_clear_to_color(al_map_rgb(0, 0, 0));
+					al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "PAUSED");
+					al_flip_display();
+					
+					// Esperar até que o botão de pausa seja pressionado novamente
+					while (1) {
+						al_wait_for_event(queue, &event);
+						if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+							if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+								pause = 0;  // Despausar o jogo
+								break;
+							}
+						}
+					}
+					continue;  // Voltar para o início do loop principal
+				}
+				
 				// Calcular delta_time
 				current_time = al_get_time();
 				delta_time = (float)(current_time - last_time);
@@ -394,6 +410,14 @@ int main() {
 				}
 				else {
 					if (event.type == 30){
+
+												
+						if (pause) {
+							al_clear_to_color(al_map_rgb(0, 0, 0));
+							al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "PAUSED");
+							al_flip_display();
+						}
+
 						update_position(player_1, player_2);	
 
 						update_character_status(character1, player_1);
@@ -432,7 +456,12 @@ int main() {
 						if (player_2->gun->timer) player_2->gun->timer--;
 
 
-						if (player_1->punch_timer) player_1->punch_timer--;
+						if (player_1->punch_timer) {
+							player_1->punch_timer--;
+						}
+						else{
+							player_1->is_punching = 0;
+						}
 						if (player_2->punch_timer) player_2->punch_timer--;	
 
 						if (player_1->kick_timer) player_1->kick_timer--;
@@ -441,6 +470,12 @@ int main() {
 						al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
 					}
 					else if ((event.type == 10) || (event.type == 12)){	
+
+						if (event.type == 10){
+							if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+								pause = !pause;
+							}
+						}
 
 						if (event.keyboard.keycode == ALLEGRO_KEY_A) joystick_left(player_1->control);																															
 						else if (event.keyboard.keycode == ALLEGRO_KEY_D) joystick_right(player_1->control);							
@@ -453,19 +488,19 @@ int main() {
 						else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) joystick_crouch(player_2->control);
 
 						else if (event.keyboard.keycode == ALLEGRO_KEY_C)	joystick_fire(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_fire(player_2->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_fire(player_2->control);
 
 						else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE) joystick_jump(player_1->control);
 						else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_jump(player_2->control);
 
 						else if (event.keyboard.keycode == ALLEGRO_KEY_E) joystick_parry(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_parry(player_2->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) joystick_parry(player_2->control);
 						
 						else if (event.keyboard.keycode == ALLEGRO_KEY_Q) joystick_punch(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_punch(player_2->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_punch(player_2->control);
 
-						else if (event.keyboard.keycode == ALLEGRO_KEY_X) joystick_kick(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_DELETE) joystick_kick(player_2->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_R) joystick_kick(player_1->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_kick(player_2->control);
 					}
 					else if (event.type == 42) return 0;																    
 				}

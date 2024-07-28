@@ -47,7 +47,8 @@ static Animation load_animation (const char* path, int num_frames, int largura_f
     return animation;
 }
 
-Character* load_character (const char* base_folder, int walk_frames, int idle_frames, int crouching_frames, int punch_frames, int kick_frames, int jump_frames, int largura_frame, int altura_frame){
+Character* load_character (const char* base_folder, int walk_frames, int idle_frames, int crouching_frames,
+                             int punch_frames, int kick_frames, int jump_frames, int parry_up_frames, int parry_down_frames, int largura_frame, int altura_frame){
     Character* character = (Character*)malloc(sizeof(Character));
     if (!character){
         printf("erro ao alocar memoria para o personagem\n");
@@ -73,6 +74,12 @@ Character* load_character (const char* base_folder, int walk_frames, int idle_fr
 
     snprintf(path, sizeof(path), "%s/crouch.png", base_folder);
     character->crouching = load_animation(path, crouching_frames, largura_frame, altura_frame, 0.1f);
+
+    snprintf(path, sizeof(path), "%s/parry_up.png", base_folder);
+    character->parry_up = load_animation(path, parry_up_frames, largura_frame, altura_frame, 0.1f);
+
+    snprintf(path, sizeof(path), "%s/parry_down.png", base_folder);
+    character->parry_down = load_animation(path, parry_down_frames, largura_frame, altura_frame, 0.1f);
 
     character->current_status = IDLE;
     character->current_frame = 0;
@@ -127,6 +134,12 @@ void draw_animation (Character* character, float x, float y, float delta_time){
         case CROUCH:
             current_animation = &character->crouching;
             break;
+        case PARRY_UP:
+            current_animation = &character->parry_up;
+            break;
+        case PARRY_DOWN:
+            current_animation = &character->parry_down;
+            break;
         default:
             current_animation = &character->idle;
             break;
@@ -156,20 +169,36 @@ void draw_animation (Character* character, float x, float y, float delta_time){
 void update_character_status(Character* character, square* player) {
     int previous_status = character->current_status;
     
-    if (player->control->right && !player->is_crouching) {
-        character->current_status = WALKING;
+    if (player->control->right && !player->is_crouching ) {
+        if (!player->is_jump && !player->is_faling)
+            character->current_status = WALKING;
+        else 
+            character->current_status = JUMPING;
     } else if (player->control->left && !player->is_crouching) {
-        character->current_status = WALKING;
+        if (!player->is_jump && !player->is_faling)
+            character->current_status = WALKING;
+        else 
+            character->current_status = JUMPING;
     } else if (player->control->crouch){
-        character->current_status = CROUCH;
-    } else if (player->control->jump) {
+        if (player->is_jump || player->is_faling)
+            character->current_status = JUMPING;
+        else{
+            if (player->control->parry)
+                character->current_status = PARRY_DOWN;
+            else
+                character->current_status = CROUCH;
+        }
+    } else if (player->is_jump || player->is_faling) {
         character->current_status = JUMPING;
     }
     else if (player->control->kick){
         character->current_status = KICKING;
     }
-    else if (player->control->punch){
+    else if (player->is_punching){
         character->current_status = PUNCHING;
+    }
+    else if (player->control->parry){
+        character->current_status = PARRY_UP;
     }
     else
         character->current_status = IDLE;
@@ -196,6 +225,12 @@ void update_character_status(Character* character, square* player) {
                 break;
             case CROUCH:
                 new_animation = &character->crouching;
+                break;
+            case PARRY_DOWN:
+                new_animation = &character->parry_down;
+                break;
+            case PARRY_UP:
+                new_animation = &character->parry_up;
                 break;
             default:
                 new_animation = &character->idle;
