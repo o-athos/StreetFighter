@@ -5,8 +5,8 @@ void choose_character(ALLEGRO_EVENT_QUEUE *queue, ALLEGRO_FONT *font, character 
     int choice = 0;
 
     // Carregar imagens dos personagens
-    ALLEGRO_BITMAP *char1_image = al_load_bitmap("images/mike_choice.png");
-    //ALLEGRO_BITMAP *char2_image = al_load_bitmap("path/to/char2_image.png");
+    ALLEGRO_BITMAP *char1_image = al_load_bitmap("images/ken_choose.png");
+    ALLEGRO_BITMAP *char2_image = al_load_bitmap("images/ryu_choose.png");
 
     while (true){
         ALLEGRO_EVENT event;
@@ -18,16 +18,18 @@ void choose_character(ALLEGRO_EVENT_QUEUE *queue, ALLEGRO_FONT *font, character 
         
         // Desenhar imagens dos personagens
         al_draw_scaled_bitmap(char1_image, 0, 0, al_get_bitmap_width(char1_image), al_get_bitmap_height(char1_image),
-                              400, 200, 100, 120, 0);
-        //al_draw_bitmap(char2_image, 400, 350, 0);
+                              300, 200, 100, 120, 0);
+
+        al_draw_scaled_bitmap(char2_image, 0, 0, al_get_bitmap_width(char2_image), al_get_bitmap_height(char2_image),
+                              600, 200, 100, 120, 0);
 
         //al_draw_text(font, al_map_rgb(255, 165, 0), 500, 300, ALLEGRO_ALIGN_CENTER, "Personagem 1");
-        al_draw_text(font, al_map_rgb(255, 165, 0), 500, 350, ALLEGRO_ALIGN_CENTER, "Personagem 2");
+        //al_draw_text(font, al_map_rgb(255, 165, 0), 500, 350, ALLEGRO_ALIGN_CENTER, "Personagem 2");
 
         if (choice == 0) {
-            al_draw_text(font, al_map_rgb(255, 255, 255), 350, 250, ALLEGRO_ALIGN_CENTER, ">");
+            al_draw_text(font, al_map_rgb(255, 255, 255), 350, 350, ALLEGRO_ALIGN_CENTER, "^");
         } else {
-            al_draw_text(font, al_map_rgb(255, 255, 255), 350, 350, ALLEGRO_ALIGN_CENTER, ">");
+            al_draw_text(font, al_map_rgb(255, 255, 255), 650, 350, ALLEGRO_ALIGN_CENTER, "^");
         }
 
         al_flip_display();
@@ -49,11 +51,11 @@ void choose_character(ALLEGRO_EVENT_QUEUE *queue, ALLEGRO_FONT *font, character 
     // Atribuir personagem escolhido ao array de personagens
     if (choice == 0) {
         characters[player - 1] = malloc(sizeof(character));
-        characters[player - 1]->name = "Personagem 1";
-        characters[player - 1]->spritesheet_path = "path/to/char1_spritesheet.png";
+        characters[player - 1]->name = "Ken";
+        characters[player - 1]->spritesheet_path = "sprites/ken";
     } else {
         characters[player - 1] = malloc(sizeof(character));
-        characters[player - 1]->name = "Personagem 2";
+        characters[player - 1]->name = "Ryu";
         characters[player - 1]->spritesheet_path = "path/to/char2_spritesheet.png";
     }
 

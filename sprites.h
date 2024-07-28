@@ -3,7 +3,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
-#include "joystick.h"
+#include "square.h"
 
 
 
@@ -47,6 +47,6 @@ void destroy_character(Character* character);
 // Função para desenhar a animação
 void draw_animation(Character* character, float x, float y, float delta_time);
 
-void update_character_status(Character* character, joystick* control);
+void update_character_status(Character* character, square* control);
 
 #endif

@@ -314,7 +314,7 @@ int main() {
     	choose_character(queue, font, characters, 1);
     	choose_character(queue, font, characters, 2);
 
-		Character* character1 = load_character("sprites/ken", 5, 4, 1, 5, 3, 7, 100, 80);
+		Character* character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 100, 90);
 
 		int p1_score = 0, p2_score = 0;
 		int rounds = 0;
@@ -385,24 +385,18 @@ int main() {
 					else if (p1_isDead){
 						p2_score++;
 						al_draw_text(font, al_map_rgb(0, 0, 255), X_SCREEN/2 - 90, Y_SCREEN/2-15, 0, "JOGADOR 2 GANHOU!");
-					}																			
-					al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2 - 175, Y_SCREEN/2+20, 0, "PRESSIONE ENTER PARA SAIR");																					
+					}																																								
 					al_flip_display();																																												
 
-					ALLEGRO_EVENT event;
-					while (1) {
-						al_wait_for_event(queue, &event);
-						if (event.type == ALLEGRO_EVENT_KEY_DOWN && event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-							round_over = 1;
-							break;
-						}
-					}		
+					al_rest(3.0);
+
+					round_over = 1;
 				}
 				else {
 					if (event.type == 30){
 						update_position(player_1, player_2);	
 
-						update_character_status(character1, player_1->control);
+						update_character_status(character1, player_1);
 
 						p1_isDead = check_kill(player_2, player_1);
 						p2_isDead = check_kill(player_1, player_2);

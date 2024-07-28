@@ -153,21 +153,24 @@ void draw_animation (Character* character, float x, float y, float delta_time){
 }
 
 
-void update_character_status(Character* character, joystick* control) {
+void update_character_status(Character* character, square* player) {
     int previous_status = character->current_status;
     
-    if (control->right) {
+    if (player->control->right) {
         character->current_status = WALKING;
-    } else if (control->left) {
+    } else if (player->control->left) {
         // Supondo que há uma animação para mover para a esquerda
         character->current_status = WALKING;
-    } else if (control->crouch){
+    } else if (player->control->crouch){
         character->current_status = CROUCH;
-    } else if (control->jump) {
+    } else if (player->control->jump) {
         character->current_status = JUMPING;
     }
-    else if (control->kick){
+    else if (player->control->kick){
         character->current_status = KICKING;
+    }
+    else if (player->control->punch){
+        character->current_status = PUNCHING;
     }
     else
         character->current_status = IDLE;
