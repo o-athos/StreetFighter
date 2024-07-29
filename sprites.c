@@ -81,7 +81,7 @@ Character* load_character (const char* base_folder, int walk_frames, int idle_fr
     snprintf(path, sizeof(path), "%s/parry_down.png", base_folder);
     character->parry_down = load_animation(path, parry_down_frames, largura_frame, altura_frame, 0.1f);
 
-    snprintf(path, sizeof(path), "%s/victory1.png", base_folder);
+    snprintf(path, sizeof(path), "%s/victory.png", base_folder);
     character->victory = load_animation(path, victory_frames, largura_frame, altura_frame, 0.5f);
 
     character->current_status = IDLE;
@@ -205,6 +205,7 @@ void update_character_status(Character* character, square* player) {
     }
     else if (player->is_punching){
         character->current_status = PUNCHING;
+        printf("oi\n");
     }
     else if (player->control->parry){
         character->current_status = PARRY_UP;

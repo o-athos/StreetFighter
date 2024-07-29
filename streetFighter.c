@@ -180,7 +180,7 @@ void update_position(square *player_1, square *player_2){
 	if (player_2->control->punch){
 		if (!player_2->punch_timer){
 			square_punch(player_2, player_1);
-
+			player_2->is_punching = 1;
 			player_2->punch_timer = PUNCH_COOLDOWN;
 		}
 	}
@@ -315,7 +315,18 @@ int main() {
     	choose_character(queue, font, characters, 1);
     	choose_character(queue, font, characters, 2);
 
-		Character* character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 100, 120);
+		Character* character1;
+		Character* character2;
+
+		if (strcmp(characters[0]->name, "Ken") == 0)
+			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 100, 120);
+		else if (strcmp(characters[0]->name, "Ryu") == 0)
+			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 100, 120);
+
+		if (strcmp(characters[1]->name, "Ken") == 0)
+			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 100, 120);
+		else if (strcmp(characters[1]->name, "Ryu") == 0)
+			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 100, 120);
 
 		char path[256];
 		snprintf(path, sizeof(path), "%s/face.png", characters[0]->spritesheet_path);
@@ -327,6 +338,7 @@ int main() {
 		ALLEGRO_BITMAP* vs = al_load_bitmap("images/vs.png");
 		
 
+		// TELA DE 'VS'
 		while (true){
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 
@@ -371,6 +383,7 @@ int main() {
 			draw_health_bar(disp, player_2->health_bar);
 
 			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, 0);
+			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, 0);
 
 			char round_message[20];
 
@@ -389,6 +402,7 @@ int main() {
 			draw_health_bar(disp, player_2->health_bar);
 
 			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, 0);
+			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, 0);
 
 			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
 			al_flip_display();
@@ -465,6 +479,7 @@ int main() {
 						update_position(player_1, player_2);	
 
 						update_character_status(character1, player_1);
+						update_character_status(character2, player_2);
 
 						p1_isDead = check_kill(player_2, player_1);
 						p2_isDead = check_kill(player_1, player_2);
@@ -481,9 +496,14 @@ int main() {
 						draw_health_bar(disp, player_2->health_bar);
 
 						draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, delta_time);
+						draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, delta_time);
 
 						if (p1_score == 1)
-							al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));
+							//al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));
+							al_draw_scaled_bitmap(char1_vs, 
+									0, 0, al_get_bitmap_width(char1_vs), al_get_bitmap_height(char1_vs), 
+									15 , 30, 20, 20, 
+									0);
 						if (p2_score == 1){
 							al_draw_filled_circle(X_SCREEN - 15, 25, 5, al_map_rgb(0, 0, 255));
 						}
@@ -500,13 +520,15 @@ int main() {
 						if (player_2->gun->timer) player_2->gun->timer--;
 
 
-						if (player_1->punch_timer) {
+						if (player_1->punch_timer) 
 							player_1->punch_timer--;
-						}
-						else{
+						else
 							player_1->is_punching = 0;
-						}
-						if (player_2->punch_timer) player_2->punch_timer--;	
+						
+						if (player_2->punch_timer)
+							player_2->punch_timer--;
+						else
+							player_2->is_punching = 0;
 
 						if (player_1->kick_timer) player_1->kick_timer--;
 						if (player_2->kick_timer) player_2->kick_timer--;	
@@ -562,9 +584,9 @@ int main() {
 		if (p1_score > p2_score) {
 			character1->current_status = VICTORY;
 			start_time = al_get_time();
-			///al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 1 Wins!");
 		} else {
-			//al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 2 Wins!");
+			character2->current_status = VICTORY;
+			start_time = al_get_time();
 		}
 
 		al_flip_display();
@@ -585,12 +607,15 @@ int main() {
 				strcpy(name, characters[0]->name);
 				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 3, ALLEGRO_ALIGN_CENTRE, name);
 			} else {
-				//draw_animation(character2, X_SCREEN / 2, Y_SCREEN / 2, delta_time);
+				draw_animation(character2, X_SCREEN / 2, Y_SCREEN / 2, 1, delta_time);
+				char name [20];
+				strcpy(name, characters[1]->name);
+				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 3, ALLEGRO_ALIGN_CENTRE, name);
 			}
 
 			al_flip_display();
 
-			if (current_time - start_time > 50.0) { 
+			if (current_time - start_time > 5.0) { 
 				break;
 			}
 
