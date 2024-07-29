@@ -317,6 +317,40 @@ int main() {
 
 		Character* character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 100, 120);
 
+		char path[256];
+		snprintf(path, sizeof(path), "%s/face.png", characters[0]->spritesheet_path);
+		ALLEGRO_BITMAP* char1_vs = al_load_bitmap(path);
+
+		snprintf(path, sizeof(path), "%s/face.png", characters[1]->spritesheet_path);
+		ALLEGRO_BITMAP* char2_vs = al_load_bitmap(path);
+
+		ALLEGRO_BITMAP* vs = al_load_bitmap("images/vs.png");
+		
+
+		while (true){
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+
+			al_draw_scaled_bitmap(char1_vs, 
+						0, 0, al_get_bitmap_width(char1_vs), al_get_bitmap_height(char1_vs), 
+						X_SCREEN / 6 , Y_SCREEN / 3, 150, 150, 
+						0);
+			al_draw_scaled_bitmap(vs, 
+						0, 0, al_get_bitmap_width(vs), al_get_bitmap_height(vs), 
+						X_SCREEN / 2 - 60, Y_SCREEN / 3, 150, 150, 
+						0);
+			al_draw_scaled_bitmap(char2_vs, 
+						0, 0, al_get_bitmap_width(char2_vs), al_get_bitmap_height(char2_vs), 
+						X_SCREEN - 280, Y_SCREEN / 3, 150, 150, 
+						ALLEGRO_FLIP_HORIZONTAL);
+			
+
+			al_flip_display();
+
+			al_rest(3.0);
+			break;
+		}
+
+
 		int p1_score = 0, p2_score = 0;
 		int rounds = 0;
 		while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){

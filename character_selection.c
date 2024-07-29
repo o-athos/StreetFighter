@@ -56,7 +56,7 @@ void choose_character(ALLEGRO_EVENT_QUEUE *queue, ALLEGRO_FONT *font, character 
     } else {
         characters[player - 1] = malloc(sizeof(character));
         characters[player - 1]->name = "Ryu";
-        characters[player - 1]->spritesheet_path = "path/to/char2_spritesheet.png";
+        characters[player - 1]->spritesheet_path = "sprites/ryu";
     }
 
 }
