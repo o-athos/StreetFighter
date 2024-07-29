@@ -48,7 +48,7 @@ static Animation load_animation (const char* path, int num_frames, int largura_f
 }
 
 Character* load_character (const char* base_folder, int walk_frames, int idle_frames, int crouching_frames,
-                             int punch_frames, int kick_frames, int jump_frames, int parry_up_frames, int parry_down_frames, int largura_frame, int altura_frame){
+                             int punch_frames, int kick_frames, int jump_frames, int parry_up_frames, int parry_down_frames, int victory_frames, int largura_frame, int altura_frame){
     Character* character = (Character*)malloc(sizeof(Character));
     if (!character){
         printf("erro ao alocar memoria para o personagem\n");
@@ -80,6 +80,9 @@ Character* load_character (const char* base_folder, int walk_frames, int idle_fr
 
     snprintf(path, sizeof(path), "%s/parry_down.png", base_folder);
     character->parry_down = load_animation(path, parry_down_frames, largura_frame, altura_frame, 0.1f);
+
+    snprintf(path, sizeof(path), "%s/victory1.png", base_folder);
+    character->victory = load_animation(path, victory_frames, largura_frame, altura_frame, 0.5f);
 
     character->current_status = IDLE;
     character->current_frame = 0;
@@ -140,6 +143,9 @@ void draw_animation (Character* character, float x, float y, float delta_time){
         case PARRY_DOWN:
             current_animation = &character->parry_down;
             break;
+        case VICTORY:
+            current_animation = &character->victory;
+            break;
         default:
             current_animation = &character->idle;
             break;
@@ -150,7 +156,7 @@ void draw_animation (Character* character, float x, float y, float delta_time){
         character->current_frame = (character->current_frame + 1) % current_animation->num_frames;
         character->time_to_next_frame = current_animation->frame_duration;
     }
-    printf("Current Status: %d\n", character->current_status);
+    /*printf("Current Status: %d\n", character->current_status);
     printf("Number of Frames: %d\n", current_animation->num_frames);
     printf("Frame Duration: %f\n", current_animation->frame_duration);
     printf("Current Frame Index: %d\n", character->current_frame);
@@ -159,7 +165,7 @@ void draw_animation (Character* character, float x, float y, float delta_time){
         printf("Error: Current frame bitmap is NULL!\n");
     } else {
         printf("Drawing bitmap at index %d\n", character->current_frame);
-    }
+    }*/
 
     al_draw_bitmap(current_animation->frames[character->current_frame], x, y, 0);
     

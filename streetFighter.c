@@ -315,7 +315,7 @@ int main() {
     	choose_character(queue, font, characters, 1);
     	choose_character(queue, font, characters, 2);
 
-		Character* character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 100, 90);
+		Character* character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 100, 120);
 
 		int p1_score = 0, p2_score = 0;
 		int rounds = 0;
@@ -369,7 +369,6 @@ int main() {
 				
 				if (pause) {
 					al_clear_to_color(al_map_rgb(0, 0, 0));
-					//al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "PAUSED");
 
 					int image_width = al_get_bitmap_width(pause_image);
 					int image_height = al_get_bitmap_height(pause_image);
@@ -519,17 +518,47 @@ int main() {
 
 		}
 
-
+		double start_time = 0;
 		/* EXIBIÇÂO DO VENCEDOR */
 		al_clear_to_color(al_map_rgb(0, 0, 0));
 		if (p1_score > p2_score) {
-			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 1 Wins!");
+			character1->current_status = VICTORY;
+			start_time = al_get_time();
+			///al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 1 Wins!");
 		} else {
-			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 2 Wins!");
+			//al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTRE, "Player 2 Wins!");
 		}
-		al_flip_display();
 
+		al_flip_display();
 		ALLEGRO_EVENT event;
+		double last_time = al_get_time();
+		double current_time;
+		float delta_time;
+		while (1) {
+			current_time = al_get_time();
+			delta_time = (float)(current_time - last_time);
+			last_time = current_time;
+
+ 			al_clear_to_color(al_map_rgb(0, 0, 0));
+			// Atualizar a animação de vitória
+			if (p1_score > p2_score) {
+				draw_animation(character1, X_SCREEN / 2, Y_SCREEN / 2, delta_time);
+				char name [20];
+				strcpy(name, characters[0]->name);
+				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 3, ALLEGRO_ALIGN_CENTRE, name);
+			} else {
+				//draw_animation(character2, X_SCREEN / 2, Y_SCREEN / 2, delta_time);
+			}
+
+			al_flip_display();
+
+			if (current_time - start_time > 50.0) { 
+				break;
+			}
+
+		}
+
+		//ALLEGRO_EVENT event;
 
 		/* PERGUNTA SE QUER JOGAR NOVAMENTE */
 		al_clear_to_color(al_map_rgb(0, 0, 0));

@@ -27,9 +27,9 @@ void choose_character(ALLEGRO_EVENT_QUEUE *queue, ALLEGRO_FONT *font, character 
         //al_draw_text(font, al_map_rgb(255, 165, 0), 500, 350, ALLEGRO_ALIGN_CENTER, "Personagem 2");
 
         if (choice == 0) {
-            al_draw_text(font, al_map_rgb(255, 255, 255), 350, 350, ALLEGRO_ALIGN_CENTER, "^");
+            al_draw_text(font, al_map_rgb(255, 255, 255), 350, 350, ALLEGRO_ALIGN_CENTER, "|");
         } else {
-            al_draw_text(font, al_map_rgb(255, 255, 255), 650, 350, ALLEGRO_ALIGN_CENTER, "^");
+            al_draw_text(font, al_map_rgb(255, 255, 255), 650, 350, ALLEGRO_ALIGN_CENTER, "|");
         }
 
         al_flip_display();
