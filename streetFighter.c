@@ -336,6 +336,8 @@ int main() {
 			draw_health_bar(disp, player_1->health_bar);
 			draw_health_bar(disp, player_2->health_bar);
 
+			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, 0);
+
 			char round_message[20];
 
 			sprintf(round_message, "Round %d", rounds + 1);
@@ -351,6 +353,8 @@ int main() {
 
 			draw_health_bar(disp, player_1->health_bar);
 			draw_health_bar(disp, player_2->health_bar);
+
+			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, 0);
 
 			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
 			al_flip_display();
