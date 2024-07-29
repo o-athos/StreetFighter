@@ -336,7 +336,7 @@ int main() {
 			draw_health_bar(disp, player_1->health_bar);
 			draw_health_bar(disp, player_2->health_bar);
 
-			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, 0);
+			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, 0);
 
 			char round_message[20];
 
@@ -354,7 +354,7 @@ int main() {
 			draw_health_bar(disp, player_1->health_bar);
 			draw_health_bar(disp, player_2->health_bar);
 
-			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, 0);
+			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, 0);
 
 			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
 			al_flip_display();
@@ -446,7 +446,7 @@ int main() {
 						draw_health_bar(disp, player_1->health_bar);
 						draw_health_bar(disp, player_2->health_bar);
 
-						draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, delta_time);
+						draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, delta_time);
 
 						if (p1_score == 1)
 							al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));
@@ -546,7 +546,7 @@ int main() {
  			al_clear_to_color(al_map_rgb(0, 0, 0));
 			// Atualizar a animação de vitória
 			if (p1_score > p2_score) {
-				draw_animation(character1, X_SCREEN / 2, Y_SCREEN / 2, delta_time);
+				draw_animation(character1, X_SCREEN / 2, Y_SCREEN / 2, 1, delta_time);
 				char name [20];
 				strcpy(name, characters[0]->name);
 				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 3, ALLEGRO_ALIGN_CENTRE, name);

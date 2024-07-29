@@ -114,7 +114,7 @@ void destroy_character(Character* character) {
 }
 
 // Finalmente, desenhar animação
-void draw_animation (Character* character, float x, float y, float delta_time){
+void draw_animation (Character* character, float x, float y, unsigned char face, float  delta_time){
 
     Animation* current_animation;
 
@@ -167,7 +167,10 @@ void draw_animation (Character* character, float x, float y, float delta_time){
         printf("Drawing bitmap at index %d\n", character->current_frame);
     }*/
 
-    al_draw_bitmap(current_animation->frames[character->current_frame], x, y, 0);
+    int flag;
+    if (face == 0)
+        flag = ALLEGRO_FLIP_HORIZONTAL;
+    al_draw_bitmap(current_animation->frames[character->current_frame], x, y, flag);
     
 }
 

@@ -52,7 +52,7 @@ Character* load_character(const char* caminho_base, int walking_frames, int idle
 void destroy_character(Character* character);
 
 // Função para desenhar a animação
-void draw_animation(Character* character, float x, float y, float delta_time);
+void draw_animation(Character* character, float x, float y, unsigned char face, float delta_time);
 
 void update_character_status(Character* character, square* control);
 
