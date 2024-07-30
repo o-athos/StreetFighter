@@ -19,11 +19,12 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 #include "pistol.h"
 #include "bullet.h"
 #include "character_selection.h"
+#include "background_selection.h"
 #include "sprites.h"
 
 #define X_SCREEN 1000
 #define Y_SCREEN 500
-#define FLOOR 400
+#define FLOOR 420
 #define HIGH_JUMP 300
 #define JUMP_SPEED 10
 #define GRAVITY 5
@@ -189,13 +190,14 @@ void update_position(square *player_1, square *player_2){
 	if (player_1->control->kick){
 		if (!player_1->kick_timer){
 			square_kick(player_1, player_2);
+			player_1->is_kicking = 1;
 			player_1->kick_timer = KICK_COOLDOWN;
 		}
 	}
 	if (player_2->control->kick){
 		if (!player_2->kick_timer){
 			square_kick(player_2, player_1);
-
+			player_2->is_kicking = 1;
 			player_2->kick_timer = KICK_COOLDOWN;
 		}
 	}
@@ -337,6 +339,9 @@ int main() {
 
 		ALLEGRO_BITMAP* vs = al_load_bitmap("images/vs.png");
 		
+		background* background_choose[1];
+		choose_background(queue, font, background_choose);
+		ALLEGRO_BITMAP *background = al_load_bitmap(background_choose[0]->image_path);
 
 		// TELA DE 'VS'
 		while (true){
@@ -376,6 +381,12 @@ int main() {
 			player_2->health_bar = create_health_bar(X_SCREEN - 410, 10, 400, 15, player_2->hp);
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
+
+			al_draw_scaled_bitmap(background, 
+				0, 0, al_get_bitmap_width(background), al_get_bitmap_height(background), 
+				0, 0, X_SCREEN, Y_SCREEN, 
+				0);
+
 			al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
 			al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 
@@ -394,6 +405,11 @@ int main() {
 			al_rest(1.0);
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
+
+			al_draw_scaled_bitmap(background, 
+				0, 0, al_get_bitmap_width(background), al_get_bitmap_height(background), 
+				0, 0, X_SCREEN, Y_SCREEN, 
+				0);
 
 			al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
 			al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
@@ -488,7 +504,13 @@ int main() {
 						if (player_2->hp == 0)
 							p2_isDead = 1;
 																																										
-						al_clear_to_color(al_map_rgb(0, 0, 0));																																																																									//Substitui tudo que estava desenhado na tela por um fundo preto
+						al_clear_to_color(al_map_rgb(0, 0, 0));	
+
+						al_draw_scaled_bitmap(background, 
+							0, 0, al_get_bitmap_width(background), al_get_bitmap_height(background), 
+							0, 0, X_SCREEN, Y_SCREEN, 
+							0);
+																																																																								//Substitui tudo que estava desenhado na tela por um fundo preto
 						al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
 						al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 						
@@ -505,7 +527,10 @@ int main() {
 									15 , 30, 20, 20, 
 									0);
 						if (p2_score == 1){
-							al_draw_filled_circle(X_SCREEN - 15, 25, 5, al_map_rgb(0, 0, 255));
+							al_draw_scaled_bitmap(char2_vs, 
+									0, 0, al_get_bitmap_width(char2_vs), al_get_bitmap_height(char2_vs), 
+									X_SCREEN - 35 , 30, 20, 20, 
+									0);
 						}
 
 
@@ -530,8 +555,15 @@ int main() {
 						else
 							player_2->is_punching = 0;
 
-						if (player_1->kick_timer) player_1->kick_timer--;
-						if (player_2->kick_timer) player_2->kick_timer--;	
+
+						if (player_1->kick_timer)
+							 player_1->kick_timer--;
+						else 
+							player_1->is_kicking = 0;
+						if (player_2->kick_timer) 
+							player_2->kick_timer--;
+						else
+							player_2->is_kicking = 0;	
 
 						al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
 					}
@@ -600,14 +632,20 @@ int main() {
 			last_time = current_time;
 
  			al_clear_to_color(al_map_rgb(0, 0, 0));
+
+			al_draw_scaled_bitmap(background, 
+				0, 0, al_get_bitmap_width(background), al_get_bitmap_height(background), 
+				0, 0, X_SCREEN, Y_SCREEN, 
+				0);
+
 			// Atualizar a animação de vitória
 			if (p1_score > p2_score) {
-				draw_animation(character1, X_SCREEN / 2, Y_SCREEN / 2, 1, delta_time);
+				draw_animation(character1, X_SCREEN / 2, FLOOR - 80, 1, delta_time);
 				char name [20];
 				strcpy(name, characters[0]->name);
 				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 3, ALLEGRO_ALIGN_CENTRE, name);
 			} else {
-				draw_animation(character2, X_SCREEN / 2, Y_SCREEN / 2, 1, delta_time);
+				draw_animation(character2, X_SCREEN / 2, FLOOR - 80, 1, delta_time);
 				char name [20];
 				strcpy(name, characters[1]->name);
 				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 3, ALLEGRO_ALIGN_CENTRE, name);

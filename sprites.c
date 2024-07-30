@@ -67,7 +67,7 @@ Character* load_character (const char* base_folder, int walk_frames, int idle_fr
     character->punching = load_animation(path, punch_frames, largura_frame, altura_frame, 0.1f);
 
     snprintf(path, sizeof(path), "%s/kick.png", base_folder);
-    character->kicking = load_animation(path, kick_frames, largura_frame, altura_frame, 0.1f);
+    character->kicking = load_animation(path, kick_frames, largura_frame, altura_frame, 0.2f);
 
     snprintf(path, sizeof(path), "%s/idle.png", base_folder);
     character->idle = load_animation(path, idle_frames, largura_frame, altura_frame, 0.1f);
@@ -200,7 +200,7 @@ void update_character_status(Character* character, square* player) {
     } else if (player->is_jump || player->is_faling) {
         character->current_status = JUMPING;
     }
-    else if (player->control->kick){
+    else if (player->is_kicking){
         character->current_status = KICKING;
     }
     else if (player->is_punching){
