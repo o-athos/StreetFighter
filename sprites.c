@@ -167,7 +167,7 @@ void draw_animation (Character* character, float x, float y, unsigned char face,
         printf("Drawing bitmap at index %d\n", character->current_frame);
     }*/
 
-    int flag;
+    int flag = 0;
     if (face == 0)
         flag = ALLEGRO_FLIP_HORIZONTAL;
     al_draw_bitmap(current_animation->frames[character->current_frame], x, y, flag);

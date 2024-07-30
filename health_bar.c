@@ -26,13 +26,15 @@ void update_health_bar(HealthBar *bar, int new_hp) {
 }
 
 void draw_health_bar(ALLEGRO_DISPLAY *display, HealthBar *bar) {
-    ALLEGRO_COLOR red = al_map_rgb(255, 0, 0);
-    ALLEGRO_COLOR green = al_map_rgb(0, 255, 0);
+    ALLEGRO_COLOR red = al_map_rgb(100, 0, 0);
+    ALLEGRO_COLOR green = al_map_rgb(0, 100, 0);
+    ALLEGRO_COLOR border_color = al_map_rgb(255, 140, 0);
 
     int bar_width = bar->width * bar->current_hp / bar->max_hp;
 
     al_draw_filled_rectangle(bar->x, bar->y, bar->x + bar->width, bar->y + bar->height, red);
     al_draw_filled_rectangle(bar->x, bar->y, bar->x + bar_width, bar->y + bar->height, green);
+    al_draw_rectangle(bar->x, bar->y, bar->x + bar->width, bar->y + bar->height, border_color, 2.0);
 }
 
 void destroy_health_bar(HealthBar *bar) {

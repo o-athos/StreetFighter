@@ -252,7 +252,8 @@ int main() {
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / 30.0);
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     ALLEGRO_DISPLAY *disp = al_create_display(X_SCREEN, Y_SCREEN);
-    ALLEGRO_FONT *font = al_load_ttf_font("fonts/PixelifySans-VariableFont_wght.ttf", 30, 0);
+    ALLEGRO_FONT *font = al_load_ttf_font("fonts/Pixellari.ttf", 30, 0);
+	ALLEGRO_FONT *font_name = al_load_ttf_font("fonts/American_Captain.ttf", 20, 0);
 
 
     // Registrar fontes de eventos
@@ -377,8 +378,8 @@ int main() {
 			square* player_2 = square_create(25, 40, 0, X_SCREEN-50, FLOOR-20, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 			if (!player_2) return 2;
 
-			player_1->health_bar = create_health_bar(10, 10, 400, 15, player_1->hp);
-			player_2->health_bar = create_health_bar(X_SCREEN - 410, 10, 400, 15, player_2->hp);
+			player_1->health_bar = create_health_bar(10, 20, 420, 25, player_1->hp);
+			player_2->health_bar = create_health_bar(X_SCREEN - 430, 20, 420, 25, player_2->hp);
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 
@@ -393,14 +394,21 @@ int main() {
 			draw_health_bar(disp, player_1->health_bar);
 			draw_health_bar(disp, player_2->health_bar);
 
+			al_draw_text(font_name, al_map_rgb(255, 140, 0), 20, 25, 0, characters[0]->name);
+			al_draw_text(font_name, al_map_rgb(255, 140, 0), X_SCREEN - 55, 25, 0, characters[1]->name);
+
+			al_draw_scaled_bitmap(vs, 
+						0, 0, al_get_bitmap_width(vs), al_get_bitmap_height(vs), 
+						X_SCREEN / 2 -20 , 10, 40, 40, 
+						0);
+
 			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, 0);
 			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, 0);
 
 			char round_message[20];
 
 			sprintf(round_message, "Round %d", rounds + 1);
-			//al_clear_to_color(al_map_rgb(0, 0, 0));
-			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, round_message);
+			al_draw_text(font, al_map_rgb(255, 165, 0), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, round_message);
 			al_flip_display();
 			al_rest(1.0);
 
@@ -416,13 +424,23 @@ int main() {
 
 			draw_health_bar(disp, player_1->health_bar);
 			draw_health_bar(disp, player_2->health_bar);
+			
+			al_draw_text(font_name, al_map_rgb(255, 140, 0), 20, 25, 0, characters[0]->name);
+			al_draw_text(font_name, al_map_rgb(255, 140, 0), X_SCREEN - 55, 25, 0, characters[1]->name);
+
+			al_draw_scaled_bitmap(vs, 
+						0, 0, al_get_bitmap_width(vs), al_get_bitmap_height(vs), 
+						X_SCREEN / 2 - 20 , 10, 40, 40, 
+						0);
 
 			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, 0);
 			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, 0);
 
-			al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
+			al_draw_text(font, al_map_rgb(255, 165, 0), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
 			al_flip_display();
 			al_rest(1.0);	
+
+			al_flush_event_queue(queue);
 
 			// Tempo inicial
 			double last_time = al_get_time();
@@ -487,6 +505,8 @@ int main() {
 
 					al_rest(3.0);
 
+					al_flush_event_queue(queue);
+
 					round_over = 1;
 				}
 				else {
@@ -516,6 +536,14 @@ int main() {
 						
 						draw_health_bar(disp, player_1->health_bar);
 						draw_health_bar(disp, player_2->health_bar);
+
+						al_draw_text(font_name, al_map_rgb(255, 140, 0), 20, 25, 0, characters[0]->name);
+						al_draw_text(font_name, al_map_rgb(255, 140, 0), X_SCREEN - 55, 25, 0, characters[1]->name);
+
+						al_draw_scaled_bitmap(vs, 
+							0, 0, al_get_bitmap_width(vs), al_get_bitmap_height(vs), 
+							X_SCREEN / 2 - 20, 10, 40, 40, 
+							0);
 
 						draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, delta_time);
 						draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, delta_time);

@@ -19,6 +19,19 @@ joystick* joystick_create(){
 	return elem;																	
 }
 
+void joystick_reset(joystick* elem){
+    elem->right = 0;																
+	elem->left = 0;																
+	elem->up = 0;																
+	elem->down = 0;	
+    elem->fire = 0;	
+    elem->jump = 0;	
+    elem->parry = 0;
+    elem->punch = 0;
+    elem->kick = 0;	
+    elem->crouch = 0;
+}
+
 void joystick_destroy(joystick* elem){
     free(elem);
 }
