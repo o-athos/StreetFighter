@@ -322,14 +322,14 @@ int main() {
 		Character* character2;
 
 		if (strcmp(characters[0]->name, "Ken") == 0)
-			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 3, 3, 100, 120);
+			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 3, 3, 3, 100, 120);
 		else if (strcmp(characters[0]->name, "Ryu") == 0)
-			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 3, 3, 100, 120);
+			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 3, 3, 3, 100, 120);
 
 		if (strcmp(characters[1]->name, "Ken") == 0)
-			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 3, 3, 100, 120);
+			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 3, 3, 3, 100, 120);
 		else if (strcmp(characters[1]->name, "Ryu") == 0)
-			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 3, 3, 100, 120);
+			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 3, 3, 3, 100, 120);
 
 		char path[256];
 		snprintf(path, sizeof(path), "%s/face.png", characters[0]->spritesheet_path);
