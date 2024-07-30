@@ -49,7 +49,7 @@ static Animation load_animation (const char* path, int num_frames, int largura_f
 
 Character* load_character (const char* base_folder, int walk_frames, int idle_frames, int crouching_frames,
                              int punch_frames, int kick_frames, int jump_frames, int parry_up_frames, int parry_down_frames, int victory_frames, int crouch_punch_frames,
-                             int crouch_kick_frames, int jump_punch_frames, int largura_frame, int altura_frame){
+                             int crouch_kick_frames, int jump_punch_frames, int jump_kick_frames, int largura_frame, int altura_frame){
 
     Character* character = (Character*)malloc(sizeof(Character));
     if (!character){
@@ -94,6 +94,9 @@ Character* load_character (const char* base_folder, int walk_frames, int idle_fr
 
     snprintf(path, sizeof(path), "%s/jump_punch.png", base_folder);
     character->jump_punch = load_animation(path, jump_punch_frames, largura_frame, altura_frame, 0.1f);
+
+    snprintf(path, sizeof(path), "%s/jump_kick.png", base_folder);
+    character->jump_kick = load_animation(path, jump_kick_frames, largura_frame, altura_frame, 0.3f);
 
     character->current_status = IDLE;
     character->current_frame = 0;
@@ -166,6 +169,9 @@ void draw_animation (Character* character, float x, float y, unsigned char face,
         case JUMP_PUNCH:
             current_animation = &character->jump_punch;
             break;
+        case JUMP_KICK:
+            current_animation = &character->jump_kick;
+            break;
         default:
             current_animation = &character->idle;
             break;
@@ -204,6 +210,8 @@ void update_character_status(Character* character, square* player) {
         else
             if (player->is_punching)
                 character->current_status = JUMP_PUNCH;
+            else if (player->is_kicking)
+                character->current_status = JUMP_KICK;
             else
                 character->current_status = JUMPING;
     } else if (player->control->left && !player->is_crouching) {
@@ -212,6 +220,8 @@ void update_character_status(Character* character, square* player) {
         else 
             if (player->is_punching)
                 character->current_status = JUMP_PUNCH;
+            else if (player->is_kicking)
+                character->current_status = JUMP_KICK;
             else
                 character->current_status = JUMPING;
     } else if (player->control->crouch){
@@ -230,6 +240,8 @@ void update_character_status(Character* character, square* player) {
     } else if (player->is_jump || player->is_faling) {
         if (player->is_punching)
             character->current_status = JUMP_PUNCH;
+        else if (player->is_kicking)
+            character->current_status = JUMP_KICK;
         else
             character->current_status = JUMPING;
     }
@@ -283,6 +295,9 @@ void update_character_status(Character* character, square* player) {
                 break;
             case JUMP_PUNCH:
                 new_animation = &character->jump_punch;
+                break;
+            case JUMP_KICK:
+                new_animation = &character->jump_kick;
                 break;
             default:
                 new_animation = &character->idle;

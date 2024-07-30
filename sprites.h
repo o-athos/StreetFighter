@@ -20,6 +20,7 @@ typedef enum{
     CROUCH_PUNCH,
     CROUCH_KICK,
     JUMP_PUNCH,
+    JUMP_KICK,
 } StatusCharacter;
 
 
@@ -44,6 +45,7 @@ typedef struct {
     Animation crouch_punch;
     Animation crouch_kick;
     Animation jump_punch;
+    Animation jump_kick;
     StatusCharacter current_status;
     int current_frame;
     float time_to_next_frame;
@@ -53,7 +55,7 @@ typedef struct {
 // Funções para carregar e destruir sprites
 Character* load_character(const char* caminho_base, int walking_frames, int idle_frames, int crouching_frames, int punching_frames,
                             int kick_frames, int jumping_frames, int parry_up_frames, int parry_down_frames, int victory_frames, int crouch_punch_frames,
-                            int crouch_kick_frames, int jump_punch_frames, int largura_frame, int altura_frame);
+                            int crouch_kick_frames, int jump_punch_frames, int jump_kick_frames, int largura_frame, int altura_frame);
 
 // Destroi
 void destroy_character(Character* character);
