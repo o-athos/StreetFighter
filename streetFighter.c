@@ -1,6 +1,6 @@
 /* 
 Compilação: 
-gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character_selection.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
+gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character_selection.c background_selection.c sprites.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
 */
 
 #include <stdio.h>
@@ -322,14 +322,14 @@ int main() {
 		Character* character2;
 
 		if (strcmp(characters[0]->name, "Ken") == 0)
-			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 100, 120);
+			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 3, 100, 120);
 		else if (strcmp(characters[0]->name, "Ryu") == 0)
-			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 100, 120);
+			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 3, 100, 120);
 
 		if (strcmp(characters[1]->name, "Ken") == 0)
-			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 100, 120);
+			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 3, 100, 120);
 		else if (strcmp(characters[1]->name, "Ryu") == 0)
-			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 100, 120);
+			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 3, 100, 120);
 
 		char path[256];
 		snprintf(path, sizeof(path), "%s/face.png", characters[0]->spritesheet_path);
