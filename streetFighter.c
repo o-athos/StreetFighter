@@ -25,7 +25,7 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 #define X_SCREEN 1000
 #define Y_SCREEN 500
 #define FLOOR 420
-#define HIGH_JUMP 300
+#define HIGH_JUMP 280
 #define JUMP_SPEED 10
 #define GRAVITY 5
 
@@ -373,9 +373,9 @@ int main() {
 		int rounds = 0;
 		while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
 
-			square* player_1 = square_create(25, 40, 1, 50, FLOOR-20, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
+			square* player_1 = square_create(50, 100, 1, 50, FLOOR-50, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
 			if (!player_1) return 1;																//Verificação de erro na criação do quadrado do primeiro jogador
-			square* player_2 = square_create(25, 40, 0, X_SCREEN-50, FLOOR-20, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
+			square* player_2 = square_create(50, 100, 0, X_SCREEN-50, FLOOR-50, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
 			if (!player_2) return 2;
 
 			player_1->health_bar = create_health_bar(10, 20, 420, 25, player_1->hp);
@@ -402,8 +402,8 @@ int main() {
 						X_SCREEN / 2 -20 , 10, 40, 40, 
 						0);
 
-			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, 0);
-			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, 0);
+			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side/2, player_1->face, 0);
+			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side/2, player_2->face, 0);
 
 			char round_message[20];
 
@@ -433,8 +433,8 @@ int main() {
 						X_SCREEN / 2 - 20 , 10, 40, 40, 
 						0);
 
-			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, 0);
-			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, 0);
+			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side/2, player_1->face, 0);
+			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side/2, player_2->face, 0);
 
 			al_draw_text(font, al_map_rgb(255, 165, 0), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
 			al_flip_display();
@@ -545,8 +545,8 @@ int main() {
 							X_SCREEN / 2 - 20, 10, 40, 40, 
 							0);
 
-						draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side, player_1->face, delta_time);
-						draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side, player_2->face, delta_time);
+						draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side/2, player_1->face, delta_time);
+						draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side/2, player_2->face, delta_time);
 
 						if (p1_score == 1)
 							//al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));

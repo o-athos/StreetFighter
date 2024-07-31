@@ -69,7 +69,7 @@ Character* load_character (const char* base_folder, int walk_frames, int idle_fr
     character->punching = load_animation(path, punch_frames, largura_frame, altura_frame, 0.1f);
 
     snprintf(path, sizeof(path), "%s/kick.png", base_folder);
-    character->kicking = load_animation(path, kick_frames, largura_frame, altura_frame, 0.2f);
+    character->kicking = load_animation(path, kick_frames, largura_frame, altura_frame, 0.15f);
 
     snprintf(path, sizeof(path), "%s/idle.png", base_folder);
     character->idle = load_animation(path, idle_frames, largura_frame, altura_frame, 0.1f);
@@ -196,7 +196,12 @@ void draw_animation (Character* character, float x, float y, unsigned char face,
     int flag = 0;
     if (face == 0)
         flag = ALLEGRO_FLIP_HORIZONTAL;
-    al_draw_bitmap(current_animation->frames[character->current_frame], x, y, flag);
+
+
+    float height = al_get_bitmap_height(current_animation->frames[character->current_frame]);
+    float width = al_get_bitmap_width(current_animation->frames[character->current_frame]);
+
+    al_draw_scaled_bitmap(current_animation->frames[character->current_frame], 0, 0, width, height, x + 25, y , width * 1.5, height * 1.5,  flag);
     
 }
 
