@@ -684,8 +684,6 @@ int main() {
 
 							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_kick(player_2->control);
 						}
-						else
-							update_bot_joystick(player_2, player_1, character2);
 
 					}
 					else if (event.type == 42) return 0;																    

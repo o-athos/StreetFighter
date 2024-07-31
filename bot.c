@@ -7,9 +7,10 @@ void update_bot_joystick(square *bot, square *player, Character *bot_character){
 
     float distance = sqrt(pow(player->x - bot->x, 2) + pow(player->y - bot->y, 2));
 
-    int direction = (player->x > bot->x) ? 1 : -1;
-
-    
+    if (player->x > bot->x)
+        bot->face = 1;
+    else 
+        bot->face = 0;
 
     if (distance < 100.0f && bot->bot_action_timer <= 0){
 
@@ -44,14 +45,14 @@ void update_bot_joystick(square *bot, square *player, Character *bot_character){
         
     }
     else{
-        if (direction == 1) {
+        if (bot->face == 1) {
             joystick_right(bot->control);
         }  
         else {
             joystick_left(bot->control);  
         }
     }
-    bot->previous_direction = direction;
+    bot->previous_direction = bot->face;
 }
 
 
@@ -69,12 +70,12 @@ void update_bot(square *bot, square *player, Character *bot_character, float del
     else if (bot->is_kicking){
         bot_character->current_status = KICKING;
     }
-    else if (bot->is_jump || bot->is_faling){
+    else if (bot->control->jump && (bot->is_jump || bot->is_faling)){
         bot_character->current_status = JUMPING;
     }
-    else if (bot->control->right || bot->control->left){
+    /*else if (bot->control->right || bot->control->left){
         bot_character->current_status = WALKING;
-    }
+    }*/
     else if (bot->is_crouching){
         bot_character->current_status = CROUCH;
     }
