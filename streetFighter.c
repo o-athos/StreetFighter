@@ -1,6 +1,6 @@
 /* 
 Compilação: 
-gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character_selection.c background_selection.c sprites.c -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
+gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character_selection.c background_selection.c sprites.c bot.c -lm -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
 */
 
 #include <stdio.h>
@@ -21,6 +21,7 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 #include "character_selection.h"
 #include "background_selection.h"
 #include "sprites.h"
+#include "bot.h"
 
 #define X_SCREEN 1000
 #define Y_SCREEN 500
@@ -171,14 +172,14 @@ void update_position(square *player_1, square *player_2){
 
 
 	/* SOCO  */
-	if (player_1->control->punch && (!player_1->control->right && !player_1->control->left) ){
+	if (player_1->control->punch && (!player_1->control->right && !player_1->control->left) && !player_1->is_kicking ){
 		if (!player_1->punch_timer){
 			square_punch(player_1, player_2);
 			player_1->is_punching = 1;
 			player_1->punch_timer = PUNCH_COOLDOWN;
 		}
 	}
-	if (player_2->control->punch && (!player_2->control->right && !player_2->control->left)){
+	if (player_2->control->punch && (!player_2->control->right && !player_2->control->left) && !player_2->is_kicking){
 		if (!player_2->punch_timer){
 			square_punch(player_2, player_1);
 			player_2->is_punching = 1;
@@ -187,14 +188,14 @@ void update_position(square *player_1, square *player_2){
 	}
 
 	/* CHUTE */
-	if (player_1->control->kick && (!player_1->control->right && !player_1->control->left) ){
+	if (player_1->control->kick && (!player_1->control->right && !player_1->control->left) && !player_1->is_punching){
 		if (!player_1->kick_timer){
 			square_kick(player_1, player_2);
 			player_1->is_kicking = 1;
 			player_1->kick_timer = KICK_COOLDOWN;
 		}
 	}
-	if (player_2->control->kick && (!player_2->control->right && !player_2->control->left)){
+	if (player_2->control->kick && (!player_2->control->right && !player_2->control->left) && !player_2->is_punching){
 		if (!player_2->kick_timer){
 			square_kick(player_2, player_1);
 			player_2->is_kicking = 1;
@@ -245,6 +246,8 @@ int main() {
     al_init_ttf_addon();
 
     al_init_image_addon();
+
+	srand(time(NULL));
         
 
 
@@ -306,6 +309,46 @@ int main() {
             return 0; // Fechar o jogo se o usuário fechar a janela
         }
     }
+
+	bool game_mode_menu = 1;
+	int bot, choice;
+
+	while (game_mode_menu){
+
+		ALLEGRO_EVENT event;
+        al_wait_for_event(queue, &event);
+
+        // Desenhar o menu de escolha de personagem
+        al_clear_to_color(al_map_rgb(0, 0, 0));
+        al_draw_text(font, al_map_rgb(255, 165, 0), 400, 100, 0, "SINGLEPLAYER");
+		al_draw_text(font, al_map_rgb(255, 165, 0), 400, 300, 0, "MULTIPLAYER");	
+
+
+        if (choice == 0) {
+            al_draw_text(font, al_map_rgb(255, 255, 255), 300, 100, ALLEGRO_ALIGN_CENTER, "->");
+        } else {
+            al_draw_text(font, al_map_rgb(255, 255, 255), 300, 300, ALLEGRO_ALIGN_CENTER, "->");
+        }
+
+		al_flip_display();
+
+		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+            if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) {
+                choice = (choice + 1) % 2;
+            } else if (event.keyboard.keycode == ALLEGRO_KEY_UP) {
+                choice = (choice + 1) % 2;
+            } else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+                break;
+            }
+        } else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+            exit(0);
+        }
+	}
+	
+	if (choice == 0)
+		bot = 1;
+	else
+		bot = 0;
 
 
 	/* -------------------------INICIO DO JOGO COM ROUNDS --------------------------------*/
@@ -373,9 +416,9 @@ int main() {
 		int rounds = 0;
 		while (p1_score - p2_score != 2 && p2_score - p1_score != 2 && rounds < 3){
 
-			square* player_1 = square_create(50, 100, 1, 50, FLOOR-50, X_SCREEN, Y_SCREEN);				//Cria o quadrado do primeiro jogador
+			square* player_1 = square_create(50, 100, 1, 50, FLOOR-50, X_SCREEN, Y_SCREEN, bot);				//Cria o quadrado do primeiro jogador
 			if (!player_1) return 1;																//Verificação de erro na criação do quadrado do primeiro jogador
-			square* player_2 = square_create(50, 100, 0, X_SCREEN-50, FLOOR-50, X_SCREEN, Y_SCREEN);		//Cria o quadrado do segundo jogador
+			square* player_2 = square_create(50, 100, 0, X_SCREEN-50, FLOOR-50, X_SCREEN, Y_SCREEN, bot);		//Cria o quadrado do segundo jogador
 			if (!player_2) return 2;
 
 			player_1->health_bar = create_health_bar(10, 20, 420, 25, player_1->hp);
@@ -515,7 +558,13 @@ int main() {
 						update_position(player_1, player_2);	
 
 						update_character_status(character1, player_1);
-						update_character_status(character2, player_2);
+						if (!player_2->is_bot) {
+							update_character_status(character2, player_2);
+						} else {
+							// Atualize o bot se player_2 for um bot
+							update_bot(player_2, player_1, character2, delta_time);
+						}
+						//update_bot(player_2, player_1, character2, delta_time);
 
 						p1_isDead = check_kill(player_2, player_1);
 						p2_isDead = check_kill(player_1, player_2);
@@ -608,25 +657,36 @@ int main() {
 						//else if (event.keyboard.keycode == ALLEGRO_KEY_W) joystick_up(player_1->control);																													
 						else if (event.keyboard.keycode == ALLEGRO_KEY_S) joystick_crouch(player_1->control);		
 
-						else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) joystick_left(player_2->control);																											
-						else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) joystick_right(player_2->control);																													
-						//else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_up(player_2->control);																														
-						else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) joystick_crouch(player_2->control);
-
 						else if (event.keyboard.keycode == ALLEGRO_KEY_C)	joystick_fire(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_fire(player_2->control);
-
+						
 						else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE) joystick_jump(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_jump(player_2->control);
-
+						
 						else if (event.keyboard.keycode == ALLEGRO_KEY_E) joystick_parry(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) joystick_parry(player_2->control);
 						
 						else if (event.keyboard.keycode == ALLEGRO_KEY_Q) joystick_punch(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_punch(player_2->control);
-
+						
 						else if (event.keyboard.keycode == ALLEGRO_KEY_R) joystick_kick(player_1->control);
-						else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_kick(player_2->control);
+						
+
+						if (!player_2->is_bot){
+							if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) joystick_left(player_2->control);																											
+							else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) joystick_right(player_2->control);																													
+							//else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_up(player_2->control);																														
+							else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) joystick_crouch(player_2->control);
+
+							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_fire(player_2->control);
+
+							else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_jump(player_2->control);
+
+							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) joystick_parry(player_2->control);
+
+							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_punch(player_2->control);
+
+							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_kick(player_2->control);
+						}
+						else
+							update_bot_joystick(player_2, player_1, character2);
+
 					}
 					else if (event.type == 42) return 0;																    
 				}

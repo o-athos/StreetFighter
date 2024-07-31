@@ -28,10 +28,13 @@ typedef struct
     joystick* control;
     pistol* gun;
     HealthBar *health_bar;
+    int is_bot;
+    float bot_action_timer;
+    int previous_direction;
 
 } square;
 
-square* square_create(unsigned char x_side, unsigned char y_side, unsigned char face, unsigned short x, unsigned short y, unsigned short x_max, unsigned int y_max);
+square* square_create(unsigned char x_side, unsigned char y_side, unsigned char face, unsigned short x, unsigned short y, unsigned short x_max, unsigned int y_max, int is_bot);
 
 void square_move(square* move, char steps, unsigned char trajectory, unsigned short x_max, unsigned short y_max);
 

@@ -3,7 +3,7 @@
 #include "square.h"
 #include "health_bar.h"
 
-square* square_create(unsigned char x_side, unsigned char y_side, unsigned char face, unsigned short x, unsigned short y, unsigned short x_max, unsigned int y_max){
+square* square_create(unsigned char x_side, unsigned char y_side, unsigned char face, unsigned short x, unsigned short y, unsigned short x_max, unsigned int y_max, int is_bot){
 
     if (x - x_side/2 < 0 || x + x_side/2 > x_max || y - y_side/2 < 0 || y + y_side/2 > y_max) {
         printf("Não foi possível criar elemento nessa posição\n");
@@ -27,6 +27,9 @@ square* square_create(unsigned char x_side, unsigned char y_side, unsigned char 
     new_element->kick_timer = 0;   
     new_element->control = joystick_create();
     new_element->gun = pistol_create();
+    new_element->is_bot = is_bot;
+    new_element->bot_action_timer = 0;
+    new_element->previous_direction = -1;
 
     return new_element;
 }
