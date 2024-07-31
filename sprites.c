@@ -209,7 +209,7 @@ void draw_animation (Character* character, float x, float y, unsigned char face,
 void update_character_status(Character* character, square* player) {
     int previous_status = character->current_status;
     
-    if (player->control->right && !player->is_crouching ) {
+    if (player->control->right && !player->is_crouching && !player->is_kicking && !player->is_punching ) {
         if (!player->is_jump && !player->is_faling)
             character->current_status = WALKING;
         else
@@ -219,7 +219,7 @@ void update_character_status(Character* character, square* player) {
                 character->current_status = JUMP_KICK;
             else
                 character->current_status = JUMPING;
-    } else if (player->control->left && !player->is_crouching) {
+    } else if (player->control->left && !player->is_crouching && !player->is_kicking && !player->is_punching) {
         if (!player->is_jump && !player->is_faling)
             character->current_status = WALKING;
         else 

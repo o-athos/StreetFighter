@@ -171,14 +171,14 @@ void update_position(square *player_1, square *player_2){
 
 
 	/* SOCO  */
-	if (player_1->control->punch){
+	if (player_1->control->punch && (!player_1->control->right && !player_1->control->left) ){
 		if (!player_1->punch_timer){
 			square_punch(player_1, player_2);
 			player_1->is_punching = 1;
 			player_1->punch_timer = PUNCH_COOLDOWN;
 		}
 	}
-	if (player_2->control->punch){
+	if (player_2->control->punch && (!player_2->control->right && !player_2->control->left)){
 		if (!player_2->punch_timer){
 			square_punch(player_2, player_1);
 			player_2->is_punching = 1;
@@ -187,14 +187,14 @@ void update_position(square *player_1, square *player_2){
 	}
 
 	/* CHUTE */
-	if (player_1->control->kick){
+	if (player_1->control->kick && (!player_1->control->right && !player_1->control->left) ){
 		if (!player_1->kick_timer){
 			square_kick(player_1, player_2);
 			player_1->is_kicking = 1;
 			player_1->kick_timer = KICK_COOLDOWN;
 		}
 	}
-	if (player_2->control->kick){
+	if (player_2->control->kick && (!player_2->control->right && !player_2->control->left)){
 		if (!player_2->kick_timer){
 			square_kick(player_2, player_1);
 			player_2->is_kicking = 1;
@@ -324,12 +324,12 @@ int main() {
 		if (strcmp(characters[0]->name, "Ken") == 0)
 			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 3, 3, 3, 2, 100, 120);
 		else if (strcmp(characters[0]->name, "Ryu") == 0)
-			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 3, 3, 3, 2, 100, 120);
+			character1 = load_character(characters[0]->spritesheet_path, 5, 4, 1, 3, 4, 7, 1, 1, 4, 3, 3, 3, 2, 100, 120);
 
 		if (strcmp(characters[1]->name, "Ken") == 0)
 			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 5, 3, 7, 1, 1, 3, 3, 3, 3, 2, 100, 120);
 		else if (strcmp(characters[1]->name, "Ryu") == 0)
-			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 3, 5, 7, 1, 1, 4, 3, 3, 3, 2, 100, 120);
+			character2 = load_character(characters[1]->spritesheet_path, 5, 4, 1, 3, 4, 7, 1, 1, 4, 3, 3, 3, 2, 100, 120);
 
 		char path[256];
 		snprintf(path, sizeof(path), "%s/face.png", characters[0]->spritesheet_path);
@@ -552,12 +552,12 @@ int main() {
 							//al_draw_filled_circle(15, 25, 5, al_map_rgb(255, 0, 0));
 							al_draw_scaled_bitmap(char1_vs, 
 									0, 0, al_get_bitmap_width(char1_vs), al_get_bitmap_height(char1_vs), 
-									15 , 30, 20, 20, 
+									15 , 50, 20, 20, 
 									0);
 						if (p2_score == 1){
 							al_draw_scaled_bitmap(char2_vs, 
 									0, 0, al_get_bitmap_width(char2_vs), al_get_bitmap_height(char2_vs), 
-									X_SCREEN - 35 , 30, 20, 20, 
+									X_SCREEN - 35 , 50, 20, 20, 
 									0);
 						}
 
@@ -668,15 +668,15 @@ int main() {
 
 			// Atualizar a animação de vitória
 			if (p1_score > p2_score) {
-				draw_animation(character1, X_SCREEN / 2, FLOOR - 80, 1, delta_time);
+				draw_animation(character1, X_SCREEN / 2, FLOOR - 120, 1, delta_time);
 				char name [20];
 				strcpy(name, characters[0]->name);
-				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 3, ALLEGRO_ALIGN_CENTRE, name);
+				al_draw_text(font, al_map_rgb(255, 140, 0), X_SCREEN / 2, Y_SCREEN / 2 - 40, ALLEGRO_ALIGN_CENTRE, name);
 			} else {
-				draw_animation(character2, X_SCREEN / 2, FLOOR - 80, 1, delta_time);
+				draw_animation(character2, X_SCREEN / 2, FLOOR - 120, 1, delta_time);
 				char name [20];
 				strcpy(name, characters[1]->name);
-				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 3, ALLEGRO_ALIGN_CENTRE, name);
+				al_draw_text(font, al_map_rgb(255, 140, 0), X_SCREEN / 2, Y_SCREEN / 2 - 40, ALLEGRO_ALIGN_CENTRE, name);
 			}
 
 			al_flip_display();
