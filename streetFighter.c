@@ -451,7 +451,7 @@ int main() {
 			char round_message[20];
 
 			sprintf(round_message, "Round %d", rounds + 1);
-			al_draw_text(font, al_map_rgb(255, 165, 0), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, round_message);
+			al_draw_text(font, al_map_rgb(255, 255, 0), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, round_message);
 			al_flip_display();
 			al_rest(1.0);
 
@@ -479,7 +479,7 @@ int main() {
 			draw_animation(character1, player_1->x-2*player_1->x_side, player_1->y-player_1->y_side/2, player_1->face, 0);
 			draw_animation(character2, player_2->x-2*player_2->x_side, player_2->y-player_2->y_side/2, player_2->face, 0);
 
-			al_draw_text(font, al_map_rgb(255, 165, 0), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
+			al_draw_text(font, al_map_rgb(255, 255, 0), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "Fight!");
 			al_flip_display();
 			al_rest(1.0);	
 
@@ -538,11 +538,11 @@ int main() {
 					else if (p2_isDead){
 						p1_score++;
 						printf("p1:%d p2:%d\n", p1_score, p2_score);
-						al_draw_text(font, al_map_rgb(255, 0, 0), X_SCREEN/2 - 90, Y_SCREEN/2-15, 0, "JOGADOR 1 GANHOU!");																				
+						al_draw_text(font, al_map_rgb(255, 0, 0), X_SCREEN/2 - 120, Y_SCREEN/2-15, 0, "JOGADOR 1 GANHOU!");																				
 					}
 					else if (p1_isDead){
 						p2_score++;
-						al_draw_text(font, al_map_rgb(0, 0, 255), X_SCREEN/2 - 90, Y_SCREEN/2-15, 0, "JOGADOR 2 GANHOU!");
+						al_draw_text(font, al_map_rgb(0, 0, 255), X_SCREEN/2 - 120, Y_SCREEN/2-15, 0, "JOGADOR 2 GANHOU!");
 					}																																								
 					al_flip_display();																																												
 
