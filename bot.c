@@ -1,4 +1,5 @@
 #include "bot.h"
+#include "joystick.h"
 
 
 void update_bot_joystick(square *bot, square *player, Character *bot_character){
@@ -12,10 +13,17 @@ void update_bot_joystick(square *bot, square *player, Character *bot_character){
     else 
         bot->face = 0;
 
+    if (!bot->is_jump && !bot->is_faling){
+        bot->control->jump = 0;
+    }
+
     if (distance < 100.0f && bot->bot_action_timer <= 0){
 
+        bot->control->right = 0;
+        bot->control->left = 0;
+
         printf("entrou\n");
-        int random_action = rand() % 6;
+        int random_action = 3;
         
         printf("random: %d\n", random_action);
         switch (random_action) {
@@ -40,16 +48,16 @@ void update_bot_joystick(square *bot, square *player, Character *bot_character){
             default:
                 break;
         }
-        bot->bot_action_timer = 20;
+        bot->bot_action_timer = 100;
 
         
     }
     else{
         if (bot->face == 1) {
-            joystick_right(bot->control);
+            bot->control->right = 1;
         }  
         else {
-            joystick_left(bot->control);  
+            bot->control->left = 1;  
         }
     }
     bot->previous_direction = bot->face;
@@ -73,9 +81,9 @@ void update_bot(square *bot, square *player, Character *bot_character, float del
     else if (bot->control->jump && (bot->is_jump || bot->is_faling)){
         bot_character->current_status = JUMPING;
     }
-    /*else if (bot->control->right || bot->control->left){
+    else if (bot->control->right || bot->control->left){
         bot_character->current_status = WALKING;
-    }*/
+    }
     else if (bot->is_crouching){
         bot_character->current_status = CROUCH;
     }

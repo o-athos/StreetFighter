@@ -20,8 +20,8 @@ joystick* joystick_create(){
 }
 
 void joystick_reset(joystick* elem){
-    elem->right = 0;																
-	elem->left = 0;																
+    //elem->right = 0;																
+	//elem->left = 0;																
 	elem->up = 0;																
 	elem->down = 0;	
     elem->fire = 0;	
