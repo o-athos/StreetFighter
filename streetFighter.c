@@ -260,42 +260,7 @@ int main() {
 	bool game_mode_menu = 1;
 	int bot, choice;
 
-	while (game_mode_menu){
 
-		ALLEGRO_EVENT event;
-        al_wait_for_event(queue, &event);
-
-        // Desenhar o menu de escolha de personagem
-        al_clear_to_color(al_map_rgb(0, 0, 0));
-        al_draw_text(font, al_map_rgb(255, 165, 0), 400, 100, 0, "SINGLEPLAYER");
-		al_draw_text(font, al_map_rgb(255, 165, 0), 400, 300, 0, "MULTIPLAYER");	
-
-
-        if (choice == 0) {
-            al_draw_text(font, al_map_rgb(255, 255, 255), 300, 100, ALLEGRO_ALIGN_CENTER, "->");
-        } else {
-            al_draw_text(font, al_map_rgb(255, 255, 255), 300, 300, ALLEGRO_ALIGN_CENTER, "->");
-        }
-
-		al_flip_display();
-
-		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
-            if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) {
-                choice = (choice + 1) % 2;
-            } else if (event.keyboard.keycode == ALLEGRO_KEY_UP) {
-                choice = (choice + 1) % 2;
-            } else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
-                break;
-            }
-        } else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-            exit(0);
-        }
-	}
-	
-	if (choice == 0)
-		bot = 1;
-	else
-		bot = 0;
 
 
 	/* -------------------------INICIO DO JOGO COM ROUNDS --------------------------------*/
@@ -304,6 +269,43 @@ int main() {
 	int play_again = 1;
 	while (play_again){
 	
+		while (game_mode_menu){
+
+			ALLEGRO_EVENT event;
+			al_wait_for_event(queue, &event);
+
+			// Desenhar o menu de escolha de personagem
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+			al_draw_text(font, al_map_rgb(255, 165, 0), 400, 100, 0, "SINGLEPLAYER");
+			al_draw_text(font, al_map_rgb(255, 165, 0), 400, 300, 0, "MULTIPLAYER");	
+
+
+			if (choice == 0) {
+				al_draw_text(font, al_map_rgb(255, 255, 255), 300, 100, ALLEGRO_ALIGN_CENTER, "->");
+			} else {
+				al_draw_text(font, al_map_rgb(255, 255, 255), 300, 300, ALLEGRO_ALIGN_CENTER, "->");
+			}
+
+			al_flip_display();
+
+			if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+				if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) {
+					choice = (choice + 1) % 2;
+				} else if (event.keyboard.keycode == ALLEGRO_KEY_UP) {
+					choice = (choice + 1) % 2;
+				} else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER) {
+					break;
+				}
+			} else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+				exit(0);
+			}
+		}
+		
+		if (choice == 0)
+			bot = 1;
+		else
+			bot = 0;
+
 		character *characters[2];
     	choose_character(queue, font, characters, 1);
     	choose_character(queue, font, characters, 2);
@@ -378,8 +380,8 @@ int main() {
 				0, 0, X_SCREEN, Y_SCREEN, 
 				0);
 
-			al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
-			al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+			//al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
+			//al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 
 			draw_health_bar(disp, player_1->health_bar);
 			draw_health_bar(disp, player_2->health_bar);
@@ -409,8 +411,8 @@ int main() {
 				0, 0, X_SCREEN, Y_SCREEN, 
 				0);
 
-			al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
-			al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+			//al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
+			//al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 
 			draw_health_bar(disp, player_1->health_bar);
 			draw_health_bar(disp, player_2->health_bar);
@@ -525,8 +527,8 @@ int main() {
 							0, 0, X_SCREEN, Y_SCREEN, 
 							0);
 																																																																								//Substitui tudo que estava desenhado na tela por um fundo preto
-						al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
-						al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+						//al_draw_filled_rectangle(player_1->x-player_1->x_side/2, player_1->y-player_1->y_side/2, player_1->x+player_1->x_side/2, player_1->y+player_1->y_side/2, al_map_rgb(255, 0, 0));					//Insere o quadrado do primeiro jogador na tela
+						//al_draw_filled_rectangle(player_2->x-player_2->x_side/2, player_2->y-player_2->y_side/2, player_2->x+player_2->x_side/2, player_2->y+player_2->y_side/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 						
 						draw_health_bar(disp, player_1->health_bar);
 						draw_health_bar(disp, player_2->health_bar);
@@ -649,12 +651,12 @@ int main() {
 				draw_animation(character1, X_SCREEN / 2, FLOOR - 120, 1, delta_time);
 				char name [20];
 				strcpy(name, characters[0]->name);
-				al_draw_text(font, al_map_rgb(255, 140, 0), X_SCREEN / 2, Y_SCREEN / 2 - 40, ALLEGRO_ALIGN_CENTRE, name);
+				al_draw_text(font, al_map_rgb(255, 255, 0), X_SCREEN / 2, Y_SCREEN / 2 - 40, ALLEGRO_ALIGN_CENTRE, name);
 			} else {
 				draw_animation(character2, X_SCREEN / 2, FLOOR - 120, 1, delta_time);
 				char name [20];
 				strcpy(name, characters[1]->name);
-				al_draw_text(font, al_map_rgb(255, 140, 0), X_SCREEN / 2, Y_SCREEN / 2 - 40, ALLEGRO_ALIGN_CENTRE, name);
+				al_draw_text(font, al_map_rgb(255, 255, 0), X_SCREEN / 2, Y_SCREEN / 2 - 40, ALLEGRO_ALIGN_CENTRE, name);
 			}
 
 			al_flip_display();
