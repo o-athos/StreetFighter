@@ -60,11 +60,11 @@ void update_bullets(square* player){
 
 void update_position(square *player_1, square *player_2){																																				
 	
-	if (player_1->control->left && !player_1->is_crouching){																																										
+	if (player_1->control->left && !player_1->is_crouching && !player_1->control->parry){																																										
 		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																																												
-			player_1->face = 0;
+		player_1->face = 0;
 	}
-	if (player_1->control->right && !player_1->is_crouching){																																										
+	if (player_1->control->right && !player_1->is_crouching && !player_1->control->parry){																																									
 		square_move(player_1, 1, 1, X_SCREEN, FLOOR);																																				
 		player_1->face = 1;
 	}
@@ -75,12 +75,12 @@ void update_position(square *player_1, square *player_2){
 		square_move(player_1, 1, 3, X_SCREEN, FLOOR);																																																												
 	}
 
-	if (player_2->control->left && !player_2->is_crouching){
+	if (player_2->control->left && !player_2->is_crouching && !player_2->is_punching && !player_2->control->parry && !player_2->is_kicking){
 		square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																																															
 		player_2->face = 0;
 	}
 	
-	if (player_2->control->right && !player_2->is_crouching){ 																																										
+	if (player_2->control->right && !player_2->is_crouching && !player_2->is_punching && !player_2->control->parry && !player_2->is_kicking){ 																																										
 		square_move(player_2, 1, 1, X_SCREEN, FLOOR);
 		player_2->face = 1;
 	}
@@ -172,14 +172,14 @@ void update_position(square *player_1, square *player_2){
 
 
 	/* SOCO  */
-	if (player_1->control->punch && (!player_1->control->right && !player_1->control->left) && !player_1->is_kicking ){
+	if (player_1->control->punch && !player_1->is_kicking ){
 		if (!player_1->punch_timer){
 			square_punch(player_1, player_2);
 			player_1->is_punching = 1;
 			player_1->punch_timer = PUNCH_COOLDOWN;
 		}
 	}
-	if (player_2->control->punch && (!player_2->control->right && !player_2->control->left) && !player_2->is_kicking){
+	if (player_2->control->punch && !player_2->is_kicking){
 		if (!player_2->punch_timer){
 			square_punch(player_2, player_1);
 			player_2->is_punching = 1;
@@ -188,14 +188,14 @@ void update_position(square *player_1, square *player_2){
 	}
 
 	/* CHUTE */
-	if (player_1->control->kick && (!player_1->control->right && !player_1->control->left) && !player_1->is_punching){
+	if (player_1->control->kick && !player_1->is_punching){
 		if (!player_1->kick_timer){
 			square_kick(player_1, player_2);
 			player_1->is_kicking = 1;
 			player_1->kick_timer = KICK_COOLDOWN;
 		}
 	}
-	if (player_2->control->kick && (!player_2->control->right && !player_2->control->left) && !player_2->is_punching){
+	if (player_2->control->kick && !player_2->is_punching){
 		if (!player_2->kick_timer){
 			square_kick(player_2, player_1);
 			player_2->is_kicking = 1;
@@ -561,11 +561,11 @@ int main() {
 						if (!player_2->is_bot) {
 							update_character_status(character2, player_2);
 						} else {
-							// Atualize o bot se player_2 for um bot
-							update_bot(player_2, player_1, character2, delta_time);
+							// Atualize o bot joystick se player_2 for um bot
+							update_bot_joystick(player_2, player_1, character2);
+							update_character_status(character2, player_2);
 						}
-						//update_bot(player_2, player_1, character2, delta_time);
-
+						
 						p1_isDead = check_kill(player_2, player_1);
 						p2_isDead = check_kill(player_1, player_2);
 						if (player_1->hp == 0)
@@ -622,22 +622,22 @@ int main() {
 						if (player_2->gun->timer) player_2->gun->timer--;
 
 
-						if (player_1->punch_timer) 
+						if (player_1->punch_timer > 0) 
 							player_1->punch_timer--;
 						else
 							player_1->is_punching = 0;
 						
-						if (player_2->punch_timer)
+						if (player_2->punch_timer > 0)
 							player_2->punch_timer--;
 						else
 							player_2->is_punching = 0;
 
 
-						if (player_1->kick_timer)
+						if (player_1->kick_timer > 0)
 							 player_1->kick_timer--;
 						else 
 							player_1->is_kicking = 0;
-						if (player_2->kick_timer) 
+						if (player_2->kick_timer > 0) 
 							player_2->kick_timer--;
 						else
 							player_2->is_kicking = 0;	

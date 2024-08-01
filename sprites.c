@@ -255,7 +255,6 @@ void update_character_status(Character* character, square* player) {
     }
     else if (player->is_punching){
         character->current_status = PUNCHING;
-        printf("oi\n");
     }
     else if (player->control->parry){
         character->current_status = PARRY_UP;
