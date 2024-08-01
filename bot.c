@@ -25,12 +25,11 @@ void update_bot_joystick(square *bot, square *player, Character *bot_character){
         if (bot->control->parry){
             bot->control->parry = 0;
         }
-        if (bot->is_punching = 0){
-            bot->control->punch = 0;
-        }
-        if (bot->is_kicking = 0){
-            bot->control->punch = 0;
-        }
+        bot->is_punching = 0;
+        bot->control->punch = 0;
+
+        bot->control->kick = 0;
+        bot->is_kicking = 0;
     }
 
     if (distance < 80.0f && bot->bot_action_timer <= 0){

@@ -31,13 +31,25 @@ gcc streetFighter.c square.c joystick.c  health_bar.c character_selection.c back
 
 void update_position(square *player_1, square *player_2){																																				
 	
-	if (player_1->control->left && !player_1->is_crouching && !player_1->control->parry){																																										
-		square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																																												
-		player_1->face = 0;
+	if (player_1->control->left && !player_1->is_crouching && !player_1->control->parry){	
+		if ((player_1->is_punching && (player_1->is_jump || player_1->is_faling)) || (player_1->is_kicking && (player_1->is_jump || player_1->is_faling))){																																									
+			square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																																												
+			player_1->face = 0;
+		}
+		if (!player_1->is_punching && !player_1->is_kicking){
+			square_move(player_1, 1, 0, X_SCREEN, FLOOR);																																																												
+			player_1->face = 0;
+		}
 	}
 	if (player_1->control->right && !player_1->is_crouching && !player_1->control->parry){																																									
-		square_move(player_1, 1, 1, X_SCREEN, FLOOR);																																				
-		player_1->face = 1;
+		if ((player_1->is_punching && (player_1->is_jump || player_1->is_faling)) || (player_1->is_kicking && (player_1->is_jump || player_1->is_faling))){																																									
+			square_move(player_1, 1, 1, X_SCREEN, FLOOR);																																																												
+			player_1->face = 1;
+		}
+		if (!player_1->is_punching && !player_1->is_kicking){
+			square_move(player_1, 1, 1, X_SCREEN, FLOOR);																																																												
+			player_1->face = 1;
+		}
 	}
 	if (player_1->control->up) {																																										
 		square_move(player_1, 1, 2, X_SCREEN, FLOOR);																																																															
@@ -46,14 +58,26 @@ void update_position(square *player_1, square *player_2){
 		square_move(player_1, 1, 3, X_SCREEN, FLOOR);																																																												
 	}
 
-	if (player_2->control->left && !player_2->is_crouching && !player_2->is_punching && !player_2->control->parry && !player_2->is_kicking){
-		square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																																															
-		player_2->face = 0;
+	if (player_2->control->left && !player_2->is_crouching && !player_2->control->parry){	
+		if ((player_2->is_punching && (player_2->is_jump || player_2->is_faling)) || (player_2->is_kicking && (player_2->is_jump || player_2->is_faling))){																																									
+			square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																																												
+			player_2->face = 0;
+		}
+		if (!player_2->is_punching && !player_2->is_kicking){
+			square_move(player_2, 1, 0, X_SCREEN, FLOOR);																																																												
+			player_2->face = 0;
+		}
 	}
 	
-	if (player_2->control->right && !player_2->is_crouching && !player_2->is_punching && !player_2->control->parry && !player_2->is_kicking){ 																																										
-		square_move(player_2, 1, 1, X_SCREEN, FLOOR);
-		player_2->face = 1;
+	if (player_2->control->right && !player_2->is_crouching && !player_2->control->parry){																																									
+		if ((player_2->is_punching && (player_2->is_jump || player_2->is_faling)) || (player_2->is_kicking && (player_2->is_jump || player_2->is_faling))){																																									
+			square_move(player_2, 1, 1, X_SCREEN, FLOOR);																																																												
+			player_2->face = 1;
+		}
+		if (!player_2->is_punching && !player_2->is_kicking){
+			square_move(player_2, 1, 1, X_SCREEN, FLOOR);																																																												
+			player_2->face = 1;
+		}
 	}
 	
 	if (player_2->control->up){																																											
