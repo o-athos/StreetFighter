@@ -26,7 +26,6 @@ square* square_create(unsigned char x_side, unsigned char y_side, unsigned char 
     new_element->punch_timer = 0;
     new_element->kick_timer = 0;   
     new_element->control = joystick_create();
-    new_element->gun = pistol_create();
     new_element->is_bot = is_bot;
     new_element->bot_action_timer = 0;
     new_element->previous_direction = -1;
@@ -59,17 +58,6 @@ void square_move(square* elem, char steps, unsigned char trajectory, unsigned sh
     }
 }
 
-
-void square_shot(square *element){
-    bullet *shot;
-
-	if (!element->face) 
-        shot = pistol_shot(element->x - element->x_side/2, element->y, element->face, element->gun);										
-	else if 
-        (element->face == 1) shot = pistol_shot(element->x + element->x_side/2, element->y, element->face, element->gun);		
-
-	if (shot) element->gun->shots = shot;
-}
 
 void square_jump(square *elem, unsigned short floor){
 
@@ -193,8 +181,7 @@ void square_stand(square *elem){
 }
 
 void square_destroy(square* elem){
-
-    pistol_destroy(elem->gun);																														
+																														
 	joystick_destroy(elem->control);
     destroy_health_bar(elem->health_bar);
     free(elem);

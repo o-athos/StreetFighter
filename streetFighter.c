@@ -1,6 +1,6 @@
 /* 
 Compilação: 
-gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character_selection.c background_selection.c sprites.c bot.c -lm -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
+gcc streetFighter.c square.c joystick.c  health_bar.c character_selection.c background_selection.c sprites.c bot.c -lm -o streetFighter $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_font-5 allegro_ttf-5 allegro_primitives-5)
 */
 
 #include <stdio.h>
@@ -16,8 +16,6 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 //bibliotecas pessoais
 #include "square.h"
 #include "joystick.h"
-#include "pistol.h"
-#include "bullet.h"
 #include "character_selection.h"
 #include "background_selection.h"
 #include "sprites.h"
@@ -30,33 +28,6 @@ gcc streetFighter.c square.c joystick.c pistol.c bullet.c health_bar.c character
 #define JUMP_SPEED 10
 #define GRAVITY 5
 
-
-
-void update_bullets(square* player){
-
-    bullet *previous = NULL;																																												
-	for (bullet *index = player->gun->shots; index != NULL;){																																				
-		if (!index->trajectory) index->x -= BULLET_MOVE;																																					
-		else if (index->trajectory == 1) index->x += BULLET_MOVE;																																			
-		
-		if ((index->x < 0) || (index->x > X_SCREEN)){																																						
-			if (previous){																																													
-				previous->next = index->next;																																								
-				bullet_destroy(index);																																										
-				index = (bullet*) previous->next;																																							
-			}
-			else {																																															
-				player->gun->shots = (bullet*) index->next;																																					
-				bullet_destroy(index);																																									
-				index = player->gun->shots;																																									
-			}
-		}
-		else{																																																
-			previous = index;																																												
-			index = (bullet*) index->next;																																									
-		}
-	}
-}
 
 void update_position(square *player_1, square *player_2){																																				
 	
@@ -91,26 +62,6 @@ void update_position(square *player_1, square *player_2){
 	if (player_2->control->down && !player_2->is_jump && !player_2->is_faling){																																										
 		square_move(player_2, 1, 3, X_SCREEN, FLOOR);																																																													
 	}
-
-
-
-	/* TIRO */
-    if (player_1->control->fire){																																											
-		if (!player_1->gun->timer){																																											
-			square_shot(player_1); 																																											
-			player_1->gun->timer = PISTOL_FIRE_RATE;																																							
-		} 
-	}
-
-	if (player_2->control->fire){																																											
-		if (!player_2->gun->timer){																																											
-			square_shot(player_2);																																											
-			player_2->gun->timer = PISTOL_FIRE_RATE;																																							
-		}
-	}
-	update_bullets(player_1);																																												
-	update_bullets(player_2);
-
 
 
 	/* PULO DO PLAYER 1 */
@@ -202,34 +153,6 @@ void update_position(square *player_1, square *player_2){
 			player_2->kick_timer = KICK_COOLDOWN;
 		}
 	}
-}
-
-unsigned char check_kill(square *killer, square *victim){																																					
-
-	bullet *previous = NULL;
-	for (bullet *index = killer->gun->shots; index != NULL; index = (bullet*) index->next){																													
-		if ((index->x >= victim->x - victim->x_side/2) && (index->x <= victim->x + victim->x_side/2) && //																										
-		   (index->y >= victim->y - victim->y_side/2) && (index->y <= victim->y + victim->y_side/2)){	
-			if (!victim->control->parry)																								
-				victim->hp--;																																													
-			if (victim->hp){																																												
-				if (previous){																																												
-					previous->next = index->next;																																							
-					bullet_destroy(index);																																									
-					index = (bullet*) previous->next;																																						
-				}
-				else {																																														
-					killer->gun->shots = (bullet*) index->next;																																			
-					bullet_destroy(index);																																									
-					index = killer->gun->shots;																																								
-				}
-				return 0;																																													
-			}
-			else return 1;																																													
-		}
-		previous = index;																																													
-	}
-	return 0;																																																
 }
 
 
@@ -566,8 +489,6 @@ int main() {
 							update_character_status(character2, player_2);
 						}
 						
-						p1_isDead = check_kill(player_2, player_1);
-						p2_isDead = check_kill(player_1, player_2);
 						if (player_1->hp == 0)
 							p1_isDead = 1;
 						if (player_2->hp == 0)
@@ -611,17 +532,6 @@ int main() {
 						}
 
 
-						for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet *)index->next){
-							al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));
-						}
-						if (player_1->gun->timer) player_1->gun->timer--;
-
-						for (bullet *index = player_2->gun->shots; index != NULL; index = (bullet *)index->next){
-							al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(0, 0, 255));
-						}
-						if (player_2->gun->timer) player_2->gun->timer--;
-
-
 						if (player_1->punch_timer > 0) 
 							player_1->punch_timer--;
 						else
@@ -652,37 +562,23 @@ int main() {
 							}
 						}
 
-						if (event.keyboard.keycode == ALLEGRO_KEY_A) joystick_left(player_1->control);																															
-						else if (event.keyboard.keycode == ALLEGRO_KEY_D) joystick_right(player_1->control);							
-						//else if (event.keyboard.keycode == ALLEGRO_KEY_W) joystick_up(player_1->control);																													
-						else if (event.keyboard.keycode == ALLEGRO_KEY_S) joystick_crouch(player_1->control);		
-
-						else if (event.keyboard.keycode == ALLEGRO_KEY_C)	joystick_fire(player_1->control);
-						
-						else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE) joystick_jump(player_1->control);
-						
-						else if (event.keyboard.keycode == ALLEGRO_KEY_E) joystick_parry(player_1->control);
-						
-						else if (event.keyboard.keycode == ALLEGRO_KEY_Q) joystick_punch(player_1->control);
-						
-						else if (event.keyboard.keycode == ALLEGRO_KEY_R) joystick_kick(player_1->control);
+						if (event.keyboard.keycode == ALLEGRO_KEY_A) 			joystick_left(player_1->control);																															
+						else if (event.keyboard.keycode == ALLEGRO_KEY_D) 		joystick_right(player_1->control);																																			
+						else if (event.keyboard.keycode == ALLEGRO_KEY_S) 		joystick_crouch(player_1->control);		
+						else if (event.keyboard.keycode == ALLEGRO_KEY_SPACE) 	joystick_jump(player_1->control);
+						else if (event.keyboard.keycode == ALLEGRO_KEY_E) 		joystick_parry(player_1->control);						
+						else if (event.keyboard.keycode == ALLEGRO_KEY_Q) 		joystick_punch(player_1->control);						
+						else if (event.keyboard.keycode == ALLEGRO_KEY_R) 		joystick_kick(player_1->control);
 						
 
 						if (!player_2->is_bot){
-							if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) joystick_left(player_2->control);																											
-							else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) joystick_right(player_2->control);																													
-							//else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_up(player_2->control);																														
-							else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) joystick_crouch(player_2->control);
-
-							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_4) joystick_fire(player_2->control);
-
-							else if (event.keyboard.keycode == ALLEGRO_KEY_UP) joystick_jump(player_2->control);
-
-							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) joystick_parry(player_2->control);
-
-							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) joystick_punch(player_2->control);
-
-							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_kick(player_2->control);
+							if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) 		joystick_left(player_2->control);																											
+							else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) 	joystick_right(player_2->control);																																																											
+							else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN) 	joystick_crouch(player_2->control);
+							else if (event.keyboard.keycode == ALLEGRO_KEY_UP) 		joystick_jump(player_2->control);
+							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) 	joystick_parry(player_2->control);
+							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_0) 	joystick_punch(player_2->control);
+							else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) 	joystick_kick(player_2->control);
 						}
 
 					}

@@ -2,7 +2,6 @@
 #define __SQUARE__
 
 #include "joystick.h"
-#include "pistol.h"
 #include "health_bar.h"
 
 #define SQUARE_STEP 7
@@ -26,7 +25,6 @@ typedef struct
     unsigned char punch_timer;
     unsigned char kick_timer;
     joystick* control;
-    pistol* gun;
     HealthBar *health_bar;
     int is_bot;
     float bot_action_timer;
