@@ -72,12 +72,10 @@ void square_punch(square *elem, square *opponent){
     if (opponent->is_crouching && !elem->is_crouching) return;
 
     if (elem->face == 0){
-        printf("quase punch\n");
-        printf("opp:%d ele:%d\n", opponent->y, elem->y );
-        printf("%d\n", elem->y_side/2);
+        //printf("quase punch\n");
         if (opponent->x <= elem->x && opponent->x >= elem->x - PUNCH_RANGE &&
         opponent->y <= elem->y + elem->y_side/2 && opponent->y >= elem->y - elem->y_side/2 ){
-            printf("dyenuing\n");
+            //printf("dyenuing\n");
             if (elem->face == opponent->face){
                 opponent->hp--;
                 update_health_bar(opponent->health_bar, opponent->hp);
@@ -85,7 +83,7 @@ void square_punch(square *elem, square *opponent){
             else if (!opponent->control->parry){
                 opponent->hp--;
                 update_health_bar(opponent->health_bar, opponent->hp);
-                printf("%u\n", opponent->hp);
+                //printf("%u\n", opponent->hp);
             }
             else if (opponent->control->parry && !opponent->is_crouching && elem->is_crouching){
                 opponent->hp--;
@@ -93,11 +91,9 @@ void square_punch(square *elem, square *opponent){
             }
         }
     } else if (elem->face == 1) { 
-        printf("quase punch\n");
-        printf("opp:%d ele:%d\n", opponent->y, elem->y );
         if (opponent->x >= elem->x && opponent->x <= elem->x + PUNCH_RANGE &&
             opponent->y <= elem->y + elem->y_side/2 && opponent->y >= elem->y - elem->y_side/2 ) {
-            printf("dyenuing\n");
+            //printf("dyenuing\n");
             if (elem->face == opponent->face){
                 opponent->hp--;
                 update_health_bar(opponent->health_bar, opponent->hp);
@@ -105,7 +101,7 @@ void square_punch(square *elem, square *opponent){
             else if (!opponent->control->parry){
                 opponent->hp--;
                 update_health_bar(opponent->health_bar, opponent->hp);
-                printf("%u\n", opponent->hp); 
+                //printf("%u\n", opponent->hp); 
             }   
             else if (opponent->control->parry && !opponent->is_crouching && elem->is_crouching){
                 opponent->hp--;
@@ -120,10 +116,10 @@ void square_kick(square *elem, square *opponent){
     if (opponent->is_crouching && !elem->is_crouching) return;
 
     if (elem->face == 0){
-        printf("quase kick1\n");
+        //printf("quase kick1\n");
         if (opponent->x <= elem->x && opponent->x >= elem->x - KICK_RANGE &&
         opponent->y <= elem->y + elem->y_side/2 && opponent->y >= elem->y - elem->y_side/2) {
-            printf("tomou1\n");
+            //printf("tomou1\n");
             if (elem->face == opponent->face){
                 opponent->hp--;
                 update_health_bar(opponent->health_bar, opponent->hp);
@@ -131,7 +127,7 @@ void square_kick(square *elem, square *opponent){
             else if (!opponent->control->parry){
                 opponent->hp--;
                 update_health_bar(opponent->health_bar, opponent->hp);
-                printf("%u\n", opponent->hp);
+                //printf("%u\n", opponent->hp);
             }
             else if (opponent->control->parry && !opponent->is_crouching && elem->is_crouching){
                 opponent->hp--;
@@ -139,10 +135,10 @@ void square_kick(square *elem, square *opponent){
             }
         }
     } else if (elem->face == 1) { 
-        printf("quase kick\n");
+        //printf("quase kick\n");
         if (opponent->x >= elem->x && opponent->x <= elem->x + KICK_RANGE &&
             opponent->y <= elem->y + elem->y_side/2 && opponent->y >= elem->y - elem->y_side/2) {
-            printf("tomou\n");
+            //printf("tomou\n");
             if (elem->face == opponent->face){
                 opponent->hp--;
                 update_health_bar(opponent->health_bar, opponent->hp);
@@ -150,7 +146,7 @@ void square_kick(square *elem, square *opponent){
             else if (!opponent->control->parry){
                 opponent->hp--;
                 update_health_bar(opponent->health_bar, opponent->hp);
-                printf("%u\n", opponent->hp);
+                //printf("%u\n", opponent->hp);
             }
             else if (opponent->control->parry && !opponent->is_crouching && elem->is_crouching){
                 opponent->hp--;
