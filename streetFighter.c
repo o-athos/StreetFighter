@@ -612,7 +612,6 @@ int main() {
 				}
 			}
 			rounds++;
-			printf("round\n");
 			square_destroy(player_1);																																												
 			square_destroy(player_2);
 

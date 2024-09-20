@@ -35,10 +35,8 @@ void update_bot_joystick(square *bot, square *player, Character *bot_character){
     if (distance < 80.0f && bot->bot_action_timer <= 0){
 
 
-        printf("entrou\n");
         int random_action = rand() % 9;
         
-        printf("random: %d\n", random_action);
         switch (random_action) {
             case 0:
                 joystick_punch(bot->control);
